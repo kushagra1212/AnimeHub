@@ -24,7 +24,7 @@ const GET_MEDIA_DETAILS = gql`
         english
       }
       coverImage {
-        medium
+        extraLarge
       }
       description
       genres
@@ -118,7 +118,7 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
-        source={{ uri: media.coverImage.medium }}
+        source={{ uri: media.coverImage.extraLarge }}
         style={styles.coverImage}
       />
       <ScrollView style={styles.content}>

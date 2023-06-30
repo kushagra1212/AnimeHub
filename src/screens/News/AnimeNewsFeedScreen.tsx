@@ -17,19 +17,26 @@ import { NewsStackParamList } from '../../Navigation';
 import { COLORS } from '../../theme';
 
 const GET_ANIME_NEWS = gql`
-  query GetAnimeNews($genre: String, $page: Int, $perPage: Int) {
+  query GetAnimeNews(
+    $genre: String
+    $page: Int
+    $perPage: Int
+    $type: MediaType
+    $status: MediaStatus
+    $sort: [MediaSort]
+  ) {
     Page(page: $page, perPage: $perPage) {
       pageInfo {
         hasNextPage
         currentPage
       }
-      media(genre: $genre, type: ANIME) {
+      media(genre: $genre, type: $type, status: $status, sort: $sort) {
         id
         title {
           english
         }
         coverImage {
-          medium
+          extraLarge
         }
         description
         genres
@@ -59,6 +66,12 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   navigation,
 }) => {
   const [selectedGenre, setSelectedGenre] = useState('All');
+  const [selectedType, setSelectedType] =
+    useState<AnimeNewsVariables['type']>('undefined');
+  const [selectedSort, setSelectedSort] =
+    useState<AnimeNewsVariables['sort']>('undefined');
+  const [selectedStatus, setSelectedStatus] =
+    useState<AnimeNewsVariables['status']>('undefined');
   const [page, setPage] = useState(1);
   const perPage = 40;
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -71,6 +84,9 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
       genre: selectedGenre === 'All' ? undefined : selectedGenre,
       page,
       perPage,
+      sort: selectedSort === 'undefined' ? undefined : selectedSort,
+      type: selectedType === 'undefined' ? undefined : selectedType,
+      status: selectedStatus === 'undefined' ? undefined : selectedStatus,
     },
   });
 
@@ -102,6 +118,21 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     setPage(1);
   };
 
+  const handleTypeChange = (type: AnimeNewsVariables['type']) => {
+    setSelectedType(type);
+    setPage(1);
+  };
+
+  const handleSortChange = (sort: AnimeNewsVariables['sort']) => {
+    setSelectedSort(sort);
+    setPage(1);
+  };
+
+  const handleStatusChange = (status: AnimeNewsVariables['status']) => {
+    setSelectedStatus(status);
+    setPage(1);
+  };
+
   const handleLoadMore = () => {
     if (pageInfo?.hasNextPage) {
       fetchMore({
@@ -125,7 +156,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   };
 
   const genreOptions = [
-    { label: 'All', value: 'All' },
+    { label: 'All', value: 'undefined' },
     { label: 'Action', value: 'Action' },
     { label: 'Comedy', value: 'Comedy' },
     { label: 'Drama', value: 'Drama' },
@@ -133,6 +164,33 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     { label: 'Romance', value: 'Romance' },
   ];
 
+  const sortOptions = [
+    { label: 'Default', value: 'undefined' },
+    { label: 'Title (A-Z)', value: 'TITLE_ROMAJI' },
+    { label: 'Title (Z-A)', value: 'TITLE_ROMAJI_DESC' },
+    { label: 'Start Date (Newest)', value: 'START_DATE' },
+    { label: 'Start Date (Oldest)', value: 'START_DATE_DESC' },
+    { label: 'End Date (Newest)', value: 'END_DATE' },
+    { label: 'End Date (Oldest)', value: 'END_DATE_DESC' },
+    { label: 'Episodes (Most)', value: 'EPISODES' },
+    { label: 'Episodes (Least)', value: 'EPISODES_DESC' },
+    { label: 'Popularity', value: 'POPULARITY' },
+    { label: 'Trending', value: 'TRENDING' },
+  ];
+
+  const statusOptions = [
+    { label: 'All', value: 'undefined' },
+    { label: 'Finished', value: 'FINISHED' },
+    { label: 'Releasing', value: 'RELEASING' },
+    { label: 'Not Yet Released', value: 'NOT_YET_RELEASED' },
+    { label: 'Cancelled', value: 'CANCELLED' },
+    { label: 'Hiatus', value: 'HIATUS' },
+  ];
+  const typeOptions = [
+    { label: 'All', value: 'undefined' },
+    { label: 'Anime', value: 'ANIME' },
+    { label: 'Manga', value: 'MANGA' },
+  ];
   const renderNewsItem = ({ item }: { item: Media }) => {
     let description = item.description;
 
@@ -155,20 +213,18 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           )}
 
           <Text style={styles.genres}>Genres: {item.genres.join(', ')}</Text>
-          <Text style={styles.source}>Source: {item.source} </Text>
+          <Text style={styles.source}>Source: {item.source}</Text>
           <Text style={styles.episodes}>Episodes: {item.episodes}</Text>
           <Text style={styles.startDate}>
             Start Date: {item.startDate.year}
           </Text>
           <Text style={styles.endDate}>End Date: {item.endDate.year}</Text>
-          {item.trailer && (
-            <TouchableOpacity>
-              <Image
-                style={styles.thumbnail}
-                source={{ uri: item.trailer.thumbnail }}
-              />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity>
+            <Image
+              style={styles.trailerThumbnail}
+              source={{ uri: item.trailer?.thumbnail }}
+            />
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
     );
@@ -176,103 +232,60 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      <RNPickerSelect
-        onValueChange={handleGenreChange}
-        items={genreOptions}
-        value={selectedGenre}
-        style={pickerSelectStyles}
-      />
+      <View style={styles.filterContainer}>
+        <Text style={styles.filterLabel}>Genre:</Text>
+        <RNPickerSelect
+          onValueChange={handleGenreChange}
+          items={genreOptions}
+          value={selectedGenre}
+          style={pickerSelectStyles}
+          placeholder={{ label: 'Select Genre', value: 'All' }}
+        />
+      </View>
+
+      <View style={styles.filterContainer}>
+        <Text style={styles.filterLabel}>Type:</Text>
+        <RNPickerSelect
+          onValueChange={handleTypeChange}
+          items={typeOptions}
+          value={selectedType}
+          style={pickerSelectStyles}
+          placeholder={{ label: 'Select Type', value: 'undefined' }}
+        />
+      </View>
+
+      <View style={styles.filterContainer}>
+        <Text style={styles.filterLabel}>Sort By:</Text>
+        <RNPickerSelect
+          onValueChange={handleSortChange}
+          items={sortOptions}
+          value={selectedSort}
+          style={pickerSelectStyles}
+          placeholder={{ label: 'Select Sort', value: 'undefined' }}
+        />
+      </View>
+
+      <View style={styles.filterContainer}>
+        <Text style={styles.filterLabel}>Status:</Text>
+        <RNPickerSelect
+          onValueChange={handleStatusChange}
+          items={statusOptions}
+          value={selectedStatus}
+          style={pickerSelectStyles}
+          placeholder={{ label: 'Select Status', value: 'undefined' }}
+        />
+      </View>
+
       <FlatList
         data={newsData}
-        keyExtractor={(item) => item.id.toString()}
         renderItem={renderNewsItem}
+        keyExtractor={(item) => item.id}
         onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={
-          pageInfo?.hasNextPage ? (
-            <Button title="Load More" onPress={handleLoadMore} />
-          ) : null
-        }
+        onEndReachedThreshold={0.5}
       />
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#F5F5F5',
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  description: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#555555',
-  },
-  genres: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#888888',
-  },
-  source: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#888888',
-  },
-  episodes: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#888888',
-  },
-  loadingText: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  errorText: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-    color: 'red',
-  },
-  startDate: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#888888',
-  },
-  endDate: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#888888',
-  },
-  thumbnail: {
-    width: '100%',
-    height: 200,
-    marginTop: 10,
-  },
-  readMore: {
-    color: COLORS.blueSecondary,
-    fontSize: 16,
-    marginTop: 5,
-    opacity: 0.5,
-    fontWeight: 'bold',
-  },
-});
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
@@ -280,22 +293,82 @@ const pickerSelectStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'gray',
     borderRadius: 4,
     color: 'black',
     paddingRight: 30,
-    backgroundColor: 'white',
   },
   inputAndroid: {
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'gray',
     borderRadius: 8,
     color: 'black',
     paddingRight: 30,
-    backgroundColor: 'white',
+  },
+});
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
+  loadingText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'red',
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  filterLabel: {
+    marginRight: 10,
+    fontSize: 16,
+  },
+  card: {
+    backgroundColor: COLORS.lightGrayPrimary,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  readMore: {
+    color: 'blue',
+    marginTop: 5,
+  },
+  genres: {
+    fontStyle: 'italic',
+    marginBottom: 5,
+  },
+  source: {
+    marginBottom: 5,
+  },
+  episodes: {
+    marginBottom: 5,
+  },
+  startDate: {
+    marginBottom: 5,
+  },
+  endDate: {
+    marginBottom: 5,
+  },
+  trailerThumbnail: {
+    width: 200,
+    height: 100,
+    resizeMode: 'cover',
   },
 });
 

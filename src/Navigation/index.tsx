@@ -95,7 +95,11 @@ const AnimeStackScreen: React.FC<AnimeStackScreenProps> = ({ navigation }) => (
   >
     <Stack.Screen name="AnimeScreen" component={AnimeScreen} />
     <Stack.Screen name="AnimeSearchScreen" component={AnimeSearchScreen} />
-    <Stack.Screen name="AnimeDetailsScreen" component={AnimeDetailsScreen} />
+    <Stack.Screen
+      options={{ headerShown: true }}
+      name="AnimeDetailsScreen"
+      component={AnimeDetailsScreen}
+    />
   </Stack.Navigator>
 );
 
@@ -109,9 +113,9 @@ const TabNavigator: React.FC<TabNavigatorScreenProps> = () => (
     }}
     initialRouteName="News"
   >
+    <Tab.Screen name="News" component={NewsStackScreen} />
     <Tab.Screen name="Characters" component={CharactersSearchStackScreen} />
     <Tab.Screen name="Anime" component={AnimeStackScreen} />
-    <Tab.Screen name="News" component={NewsStackScreen} />
   </Tab.Navigator>
 );
 
