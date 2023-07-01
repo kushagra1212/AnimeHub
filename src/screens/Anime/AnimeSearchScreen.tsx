@@ -22,6 +22,8 @@ import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { throttleFunc } from '../../utils';
+import AnimeSearch from '../../components/molecules/AnimeSearch';
+import AnimeCard from '../../components/molecules/RenderAnimeCard';
 
 const GET_MEDIA_SEARCH = gql`
   query SearchAnime(
@@ -59,200 +61,6 @@ const GET_MEDIA_SEARCH = gql`
     }
   }
 `;
-const renderAnimeCard = ({ item }) => {
-  const { coverImage, title, genres, tags, rankings } = item;
-
-  return (
-    <View style={animeCardStyles.animeCard}>
-      <Image
-        style={animeCardStyles.coverImage}
-        source={{ uri: coverImage.extraLarge }}
-      />
-      <View style={animeCardStyles.infoContainer}>
-        <Text style={animeCardStyles.title}>{title.english}</Text>
-        {genres.length > 0 && (
-          <Text style={animeCardStyles.genres}>
-            Genres: {genres.join(', ')}
-          </Text>
-        )}
-
-        {rankings.length > 0 ? (
-          <View>
-            <Text style={animeCardStyles.rankingsTitle}>Rankings:</Text>
-            <FlatList
-              data={rankings}
-              keyExtractor={(item, index) => index.toString()}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <Text style={animeCardStyles.ranking}>
-                  {item.type} - {item.format}
-                </Text>
-              )}
-              contentContainerStyle={animeCardStyles.rankingsContainer}
-            />
-          </View>
-        ) : null}
-      </View>
-      {tags.length > 0 && (
-        <View style={animeCardStyles.tagsContainer}>
-          <Text style={animeCardStyles.tagsTitle}>Tags:</Text>
-          <FlatList
-            data={tags}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <Text style={animeCardStyles.tag}>{item.name}</Text>
-            )}
-            contentContainerStyle={animeCardStyles.tagsFlatList}
-          />
-        </View>
-      )}
-    </View>
-  );
-};
-
-const animeCardStyles = StyleSheet.create({
-  animeCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    marginBottom: 16,
-    elevation: 4,
-    shadowColor: '#000000',
-    shadowOpacity: 0.2,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowRadius: 4,
-  },
-  coverImage: {
-    width: '100%',
-    height: 200,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-  },
-  infoContainer: {
-    padding: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    color: '#333333',
-  },
-  genres: {
-    fontSize: 16,
-    marginBottom: 12,
-    color: '#666666',
-  },
-  rankingsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 6,
-    color: '#333333',
-  },
-  ranking: {
-    fontSize: 16,
-    marginBottom: 4,
-    color: '#666666',
-    marginRight: 8,
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    borderRadius: 16,
-    backgroundColor: '#F4F4F4',
-  },
-  rankingsContainer: {
-    paddingTop: 8,
-  },
-  tagsContainer: {
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-    padding: 16,
-  },
-  tagsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#333333',
-  },
-  tagsFlatList: {
-    alignItems: 'flex-start',
-    paddingVertical: 8,
-  },
-  tag: {
-    fontSize: 16,
-    color: '#333333',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    shadowColor: '#000000',
-    shadowOpacity: 0.2,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowRadius: 4,
-  },
-});
-
-const AnimeSearch = forwardRef(
-  (props: any, ref: React.LegacyRef<TextInput>) => {
-    const { goBackHandler, searchText, handleSearch, handleSearchSubmit } =
-      props;
-    return (
-      <View style={specificStyles.container}>
-        <AntDesign
-          onPress={goBackHandler}
-          name="arrowleft"
-          size={24}
-          color="black"
-          style={specificStyles.icon}
-        />
-
-        <View style={specificStyles.inputContainer}>
-          <TextInput
-            ref={ref}
-            style={specificStyles.input}
-            placeholder="Search Anime"
-            value={searchText}
-            onChangeText={handleSearch}
-            onSubmitEditing={handleSearchSubmit}
-          />
-        </View>
-      </View>
-    );
-  }
-);
-
-const specificStyles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    elevation: 2,
-  },
-  icon: {
-    marginRight: 8,
-  },
-  inputContainer: {
-    flex: 1,
-    backgroundColor: '#EEEEEE',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-  },
-  input: {
-    fontSize: 16,
-    color: '#333333',
-    paddingVertical: 12,
-  },
-});
 
 const AnimeSearchScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
@@ -276,13 +84,11 @@ const AnimeSearchScreen = ({ navigation }) => {
     let media = data?.Page.media ?? [];
 
     return media.filter(
-      (item) =>
-        item.title.english !== null &&
-        !item.genres.includes('Hentai') &&
-        item.tags.find((tag) => tag.name.toLower() === 'nudity') === -1
+      (item) => item.title.english !== null && !item.genres.includes('Hentai')
     );
   }, [data]);
   const goBackHandler = () => {
+    console.log('go back');
     navigation.goBack();
   };
 
@@ -343,28 +149,36 @@ const AnimeSearchScreen = ({ navigation }) => {
 
     return () => clearTimeout(timer);
   }, []);
-
+  const Card = ({ item }) => {
+    return <AnimeCard item={item} navigation={navigation} />;
+  };
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <AnimeSearch
         ref={searchInputRef}
-        {...{ ...goBackHandler, searchText, handleSearch, handleSearchSubmit }}
+        {...{
+          goBackHandler,
+          searchText,
+          handleSearch,
+          handleSearchSubmit,
+          showBackButton: true,
+        }}
       />
       {animeData.length === 0 &&
         searchText &&
         searchText !== '' &&
-        !loading && <Text>No results found</Text>}
+        !loading && <Text style={styles.message}>No results found</Text>}
       {animeData.length === 0 && searchText === '' && !loading && (
-        <Text>Search Anime Here</Text>
+        <Text style={styles.message}>Search Anime Here</Text>
       )}
       {loading ? (
-        <View>
+        <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.greenPrimary} />
         </View>
       ) : (
         <FlatList
           data={animeData}
-          renderItem={renderAnimeCard}
+          renderItem={Card}
           keyExtractor={(item) => item.id}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={2}
@@ -373,5 +187,22 @@ const AnimeSearchScreen = ({ navigation }) => {
     </View>
   );
 };
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  message: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default AnimeSearchScreen;

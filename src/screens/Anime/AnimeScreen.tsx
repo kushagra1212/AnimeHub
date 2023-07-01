@@ -1,196 +1,197 @@
-import React, { useState, useEffect } from 'react';
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
   Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
   Image,
   ActivityIndicator,
 } from 'react-native';
-import { useLazyQuery, gql, useQuery } from '@apollo/client';
+import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
+import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import { throttleFunc } from '../../utils';
+import AnimeSearch from '../../components/molecules/AnimeSearch';
+import AnimeCard from '../../components/molecules/RenderAnimeCard';
 
-const GET_ANIME_LIST = gql`
-  query Page($page: Int, $perPage: Int) {
+const GET_MEDIA_SEARCH = gql`
+  query SearchAnime(
+    $search: String
+    $type: MediaType
+    $page: Int
+    $perPage: Int
+  ) {
     Page(page: $page, perPage: $perPage) {
-      media {
-        bannerImage
-        averageScore
-        coverImage {
-          extraLarge
-        }
-        episodes
-        duration
-        endDate {
-          year
-        }
-        isAdult
-        popularity
-        rankings {
-          season
-        }
+      media(search: $search, type: $type) {
+        id
         title {
           english
         }
-        id
+        bannerImage
+        genres
+        tags {
+          name
+        }
+        rankings {
+          type
+          format
+          allTime
+          id
+        }
+        coverImage {
+          extraLarge
+        }
+      }
+      pageInfo {
+        hasNextPage
+        currentPage
+        lastPage
       }
     }
   }
 `;
 
-const SearchBar = ({ handleSearchBarPress }) => {
-  const handleSearch = () => {};
-  return (
-    <View style={styles.searchContainer}>
-      <View
-        onTouchStart={handleSearchBarPress}
-        style={{
-          backgroundColor: COLORS.primary,
-          zIndex: 100,
-          height: '100%',
-          width: '100%',
-          opacity: 0,
-          position: 'absolute',
-        }}
-      ></View>
-      <TextInput
-        style={styles.input}
-        placeholder="Search Anime"
-        value={''}
-        onSubmitEditing={handleSearch}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleSearch}>
-        <Text style={styles.buttonText}>Search</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-
-const Card = ({ anime, onPress }) => {
-  return (
-    <TouchableOpacity
-      style={styles.cardContainer}
-      onPress={() => onPress(anime)}
-    >
-      {/* <Image
-        source={{ uri: anime?.coverImage?.extraLarge }}
-        style={styles.cardImage}
-      /> */}
-      <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>
-          {anime?.title?.english}({anime?.episodes})
-        </Text>
-        <Text style={styles.cardDescription}>{anime?.averageScore}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-};
-
 const AnimeScreen = ({ navigation }) => {
-  const [page, setPage] = useState(1);
-  const perPage = 1;
+  const searchInputRef = useRef(null);
 
-  const { loading, error, data, fetchMore } = useQuery(GET_ANIME_LIST);
+  const [searchText, setSearchText] = useState('');
+  const [prevDate, setPrevDate] = useState(Date.now());
+  const page = 1;
+  const perPage = 10;
+  const { loading, data, fetchMore, error } = useQuery(GET_MEDIA_SEARCH, {
+    variables: {
+      type: 'ANIME',
+      page: page,
+      perPage: perPage,
+    },
+  });
+  const pageInfo = data?.Page.pageInfo;
 
-  useEffect(() => {
-    fetchMore({
-      variables: {
-        page,
-        perPage,
-      },
-    });
-  }, [page]);
-  const animeList = data?.Page.media ?? [];
+  const animeData = useMemo(() => {
+    let media = data?.Page.media ?? [];
+
+    return media.filter(
+      (item) => item.title.english !== null && !item.genres.includes('Hentai')
+    );
+  }, [data]);
+  const goBackHandler = () => {};
+
+  const handleSearch = (text: string) => {};
+
+  const handleSearchSubmit = () => {};
 
   const handleLoadMore = () => {
-    setPage((prev) => prev + 1);
+    if (pageInfo?.hasNextPage) {
+      fetchMore({
+        variables: { page: pageInfo.currentPage + 1 },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prev;
+          return {
+            ...prev,
+            Page: {
+              ...prev.Page,
+              media: [
+                ...(prev.Page.media ?? []),
+                ...(fetchMoreResult?.Page.media ?? []),
+              ],
+              pageInfo: fetchMoreResult?.Page.pageInfo,
+            },
+          };
+        },
+      });
+    }
   };
 
-  const handleSearchBarPress = () => {
-    navigation.navigate('AnimeSearchScreen');
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      searchInputRef.current.focus();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+  const Card = ({ item }) => {
+    return <AnimeCard item={item} navigation={navigation} />;
   };
 
-  const handleCardPress = (anime) => {
-    navigation.navigate('AnimeDetailsScreen', { animeId: anime.id });
-  };
-
-  const renderAnimeCard = ({ item }) => (
-    <Card anime={item} onPress={handleCardPress} />
-  );
   return (
     <View style={styles.container}>
-      <SearchBar handleSearchBarPress={handleSearchBarPress} />
-      <FlatList
-        data={animeList}
-        keyExtractor={(item) => item?.id.toString()}
-        renderItem={renderAnimeCard}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        contentContainerStyle={styles.listContent}
-      />
-      {loading && <ActivityIndicator size="large" color="blue" />}
+      <View
+        style={{
+          position: 'relative',
+          backgroundColor: COLORS.black,
+        }}
+      >
+        <View
+          onTouchStart={() => navigation.navigate('AnimeSearchScreen')}
+          style={{
+            backgroundColor: COLORS.redPrimary,
+            zIndex: 10000,
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            opacity: 0,
+          }}
+        ></View>
+        <AnimeSearch
+          ref={searchInputRef}
+          {...{
+            goBackHandler,
+            searchText,
+            handleSearch,
+            handleSearchSubmit,
+            showBackButton: false,
+          }}
+        />
+      </View>
+      {animeData.length === 0 &&
+        searchText &&
+        searchText !== '' &&
+        !loading && <Text style={styles.message}>No results found</Text>}
+      {animeData.length === 0 && searchText === '' && !loading && (
+        <Text style={styles.message}>Search Anime Here</Text>
+      )}
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.greenPrimary} />
+        </View>
+      ) : (
+        <FlatList
+          data={animeData}
+          renderItem={Card}
+          keyExtractor={(item) => item.id}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={2}
+        />
+      )}
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    backgroundColor: '#FFFFFF',
   },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: COLORS.GrayPrimary,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginRight: 8,
-  },
-  button: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: COLORS.primary,
-  },
-  buttonText: {
-    color: COLORS.white,
+  message: {
+    fontSize: 18,
     fontWeight: 'bold',
-  },
-  listContent: {
-    padding: 16,
-  },
-  cardContainer: {
-    marginBottom: 16,
-    backgroundColor: COLORS.white,
-    borderRadius: 8,
-    padding: 16,
-  },
-  cardImage: {
-    width: '100%',
-    height: 200,
-    resizeMode: 'cover',
-    borderRadius: 8,
-  },
-  cardContent: {
+    textAlign: 'center',
     marginTop: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-  },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  cardDescription: {
-    fontSize: 16,
-    color: COLORS.GrayPrimary,
   },
 });
 

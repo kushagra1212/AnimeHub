@@ -80,7 +80,7 @@ const CharactersSearchStackScreen: React.FC<
 export type AnimeStackParamList = {
   AnimeScreen: undefined;
   AnimeSearchScreen: undefined;
-  AnimeDetailsScreen: { animeId: string };
+  AnimeDetailsScreen: { mediaId: string };
 };
 
 export type AnimeStackScreenProps = {
@@ -96,7 +96,7 @@ const AnimeStackScreen: React.FC<AnimeStackScreenProps> = ({ navigation }) => (
     <Stack.Screen name="AnimeScreen" component={AnimeScreen} />
     <Stack.Screen name="AnimeSearchScreen" component={AnimeSearchScreen} />
     <Stack.Screen
-      options={{ headerShown: true }}
+      options={{ headerShown: false }}
       name="AnimeDetailsScreen"
       component={AnimeDetailsScreen}
     />
