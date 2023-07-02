@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
   StyleSheet,
   View,
@@ -152,4 +153,4 @@ const animeCardStyles = StyleSheet.create({
   },
 });
 
-export default AnimeCard;
+export default memo(AnimeCard);

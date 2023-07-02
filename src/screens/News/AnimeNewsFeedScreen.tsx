@@ -15,6 +15,12 @@ import { AnimeNewsData, AnimeNewsVariables, Media } from '../../types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NewsStackParamList } from '../../Navigation';
 import { COLORS } from '../../theme';
+import {
+  genreOptions,
+  sortOptions,
+  statusOptions,
+  typeOptions,
+} from '../../utils';
 
 const GET_ANIME_NEWS = gql`
   query GetAnimeNews(
@@ -48,11 +54,6 @@ const GET_ANIME_NEWS = gql`
         endDate {
           year
         }
-        trailer {
-          id
-          site
-          thumbnail
-        }
       }
     }
   }
@@ -73,8 +74,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   const [selectedStatus, setSelectedStatus] =
     useState<AnimeNewsVariables['status']>('undefined');
   const [page, setPage] = useState(1);
-  const perPage = 40;
-  const [showFullDescription, setShowFullDescription] = useState(false);
+  const perPage = 10;
 
   const { loading, error, data, fetchMore } = useQuery<
     AnimeNewsData,
@@ -93,7 +93,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading...</Text>
+        <Text> Loading...</Text>
       </View>
     );
   }
@@ -101,12 +101,16 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   if (error) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Error: {error.message}</Text>
+        <Text>Error: {error.message}</Text>
       </View>
     );
   }
 
-  const newsData = data?.Page.media ?? [];
+  const _data =
+    data?.Page.media.filter((item) => item.title.english !== null) ?? [];
+  const newsData = Array.from(
+    new Map(_data.map((item) => [item.id, item])).values()
+  );
   const pageInfo = data?.Page.pageInfo;
 
   const handleNewsItemPress = (item: Media) => {
@@ -154,77 +158,45 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
       });
     }
   };
-
-  const genreOptions = [
-    { label: 'All', value: 'undefined' },
-    { label: 'Action', value: 'Action' },
-    { label: 'Comedy', value: 'Comedy' },
-    { label: 'Drama', value: 'Drama' },
-    { label: 'Fantasy', value: 'Fantasy' },
-    { label: 'Romance', value: 'Romance' },
-  ];
-
-  const sortOptions = [
-    { label: 'Default', value: 'undefined' },
-    { label: 'Title (A-Z)', value: 'TITLE_ROMAJI' },
-    { label: 'Title (Z-A)', value: 'TITLE_ROMAJI_DESC' },
-    { label: 'Start Date (Newest)', value: 'START_DATE' },
-    { label: 'Start Date (Oldest)', value: 'START_DATE_DESC' },
-    { label: 'End Date (Newest)', value: 'END_DATE' },
-    { label: 'End Date (Oldest)', value: 'END_DATE_DESC' },
-    { label: 'Episodes (Most)', value: 'EPISODES' },
-    { label: 'Episodes (Least)', value: 'EPISODES_DESC' },
-    { label: 'Popularity', value: 'POPULARITY' },
-    { label: 'Trending', value: 'TRENDING' },
-  ];
-
-  const statusOptions = [
-    { label: 'All', value: 'undefined' },
-    { label: 'Finished', value: 'FINISHED' },
-    { label: 'Releasing', value: 'RELEASING' },
-    { label: 'Not Yet Released', value: 'NOT_YET_RELEASED' },
-    { label: 'Cancelled', value: 'CANCELLED' },
-    { label: 'Hiatus', value: 'HIATUS' },
-  ];
-  const typeOptions = [
-    { label: 'All', value: 'undefined' },
-    { label: 'Anime', value: 'ANIME' },
-    { label: 'Manga', value: 'MANGA' },
-  ];
   const renderNewsItem = ({ item }: { item: Media }) => {
-    let description = item.description;
+    let description = item.description || '';
 
-    if (!showFullDescription && description.length > 150) {
-      description = `${description.slice(0, 150)}...`;
+    if (description && description?.length > 150) {
+      description = `${description?.slice(0, 150)}...`;
     }
+
     return (
       <TouchableOpacity onPress={() => handleNewsItemPress(item)}>
         <View style={styles.card}>
           <Text style={styles.title}>{item.title.english}</Text>
           <RenderHTML
             contentWidth={200}
-            source={{ html: item.description.slice(0, 150) }}
+            source={{ html: item.description?.slice(0, 150) }}
           />
           {/* Render HTML content */}
-          {description.length > 150 && (
+          {description && description?.length > 150 && (
             <TouchableOpacity onPress={() => handleNewsItemPress(item)}>
               <Text style={styles.readMore}>Read More</Text>
             </TouchableOpacity>
           )}
 
-          <Text style={styles.genres}>Genres: {item.genres.join(', ')}</Text>
-          <Text style={styles.source}>Source: {item.source}</Text>
-          <Text style={styles.episodes}>Episodes: {item.episodes}</Text>
-          <Text style={styles.startDate}>
-            Start Date: {item.startDate.year}
-          </Text>
-          <Text style={styles.endDate}>End Date: {item.endDate.year}</Text>
-          <TouchableOpacity>
-            <Image
-              style={styles.trailerThumbnail}
-              source={{ uri: item.trailer?.thumbnail }}
-            />
-          </TouchableOpacity>
+          {item?.genres && (
+            <Text style={styles.genres}>Genres: {item.genres.join(', ')}</Text>
+          )}
+          {item?.source && (
+            <Text style={styles.source}>Source: {item.source}</Text>
+          )}
+          {item.episodes && (
+            <Text style={styles.episodes}>Episodes: {item.episodes}</Text>
+          )}
+          {item.startDate?.year && (
+            <Text style={styles.startDate}>
+              Start Date: {item.startDate.year}
+            </Text>
+          )}
+          {item.endDate?.year && (
+            <Text style={styles.endDate}>End Date: {item.endDate.year}</Text>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -293,20 +265,30 @@ const pickerSelectStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: COLORS.primary,
     borderRadius: 4,
-    color: 'black',
+    color: COLORS.primary,
     paddingRight: 30,
+    backgroundColor: COLORS.lightGrayPrimary,
   },
   inputAndroid: {
     fontSize: 16,
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: COLORS.primary,
     borderRadius: 8,
-    color: 'black',
+    color: COLORS.primary,
     paddingRight: 30,
+    backgroundColor: COLORS.lightGrayPrimary,
+  },
+  iconContainer: {
+    top: 12,
+    right: 10,
+  },
+  chevronIcon: {
+    color: COLORS.primary,
+    fontSize: 20,
   },
 });
 
@@ -315,15 +297,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     paddingTop: 10,
-  },
-  loadingText: {
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  errorText: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: 'red',
   },
   filterContainer: {
     flexDirection: 'row',
@@ -346,7 +319,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   readMore: {
-    color: 'blue',
+    color: COLORS.primary,
     marginTop: 5,
   },
   genres: {

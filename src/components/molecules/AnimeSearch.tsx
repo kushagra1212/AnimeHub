@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, memo } from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 
@@ -64,4 +64,4 @@ const specificStyles = StyleSheet.create({
   },
 });
 
-export default AnimeSearch;
+export default memo(AnimeSearch);

@@ -56,7 +56,6 @@ const GET_MEDIA_SEARCH = gql`
       pageInfo {
         hasNextPage
         currentPage
-        lastPage
       }
     }
   }
@@ -83,13 +82,13 @@ const AnimeSearchScreen = ({ navigation }) => {
   const animeData = useMemo(() => {
     let media = data?.Page.media ?? [];
 
+    media = Array.from(new Map(media.map((item) => [item.id, item])).values());
     return media.filter(
       (item) => item.title.english !== null && !item.genres.includes('Hentai')
     );
   }, [data]);
   const goBackHandler = () => {
-    console.log('go back');
-    navigation.goBack();
+    navigation.replace('AnimeScreen');
   };
 
   const handleSearch = (text: string) => {
@@ -129,12 +128,11 @@ const AnimeSearchScreen = ({ navigation }) => {
           return {
             ...prev,
             Page: {
-              ...prev.Page,
               media: [
                 ...(prev.Page.media ?? []),
                 ...(fetchMoreResult?.Page.media ?? []),
               ],
-              pageInfo: fetchMoreResult?.Page.pageInfo,
+              pageInfo: fetchMoreResult.Page.pageInfo,
             },
           };
         },
@@ -179,7 +177,7 @@ const AnimeSearchScreen = ({ navigation }) => {
         <FlatList
           data={animeData}
           renderItem={Card}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={2}
         />

@@ -4,6 +4,10 @@ import { LogBox, StyleSheet, Text, View } from 'react-native';
 import TabNavigator from './src/Navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
+LogBox.ignoreLogs([
+  'Cache data may be lost when replacing the Page field of a Query object.',
+]);
+
 const client = new ApolloClient({
   uri: 'https://graphql.anilist.co',
   cache: new InMemoryCache(),
@@ -31,6 +35,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-LogBox.ignoreLogs([
-  'Cache data may be lost when replacing the Page field of a Query object.',
-]);

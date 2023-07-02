@@ -24,6 +24,7 @@ import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { throttleFunc } from '../../utils';
 import AnimeSearch from '../../components/molecules/AnimeSearch';
 import AnimeCard from '../../components/molecules/RenderAnimeCard';
+import { useFocusEffect } from '@react-navigation/native';
 
 const GET_MEDIA_SEARCH = gql`
   query SearchAnime(
@@ -56,7 +57,6 @@ const GET_MEDIA_SEARCH = gql`
       pageInfo {
         hasNextPage
         currentPage
-        lastPage
       }
     }
   }
@@ -65,32 +65,32 @@ const GET_MEDIA_SEARCH = gql`
 const AnimeScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
 
-  const [searchText, setSearchText] = useState('');
-  const [prevDate, setPrevDate] = useState(Date.now());
   const page = 1;
   const perPage = 10;
-  const { loading, data, fetchMore, error } = useQuery(GET_MEDIA_SEARCH, {
-    variables: {
-      type: 'ANIME',
-      page: page,
-      perPage: perPage,
-    },
-  });
+  const { loading, data, fetchMore, error, refetch } = useQuery(
+    GET_MEDIA_SEARCH,
+    {
+      variables: {
+        type: 'ANIME',
+        page: page,
+        perPage: perPage,
+      },
+    }
+  );
   const pageInfo = data?.Page.pageInfo;
 
-  const animeData = useMemo(() => {
-    let media = data?.Page.media ?? [];
-
-    return media.filter(
-      (item) => item.title.english !== null && !item.genres.includes('Hentai')
-    );
-  }, [data]);
+  let media = data?.Page.media ?? [];
+  media = Array.from(new Map(media.map((item) => [item.id, item])).values());
+  const animeData = media.filter(
+    (item) => item.title.english !== null && !item.genres.includes('Hentai')
+  );
   const goBackHandler = () => {};
 
   const handleSearch = (text: string) => {};
 
   const handleSearchSubmit = () => {};
 
+  console.log('pageInfo', pageInfo, page);
   const handleLoadMore = () => {
     if (pageInfo?.hasNextPage) {
       fetchMore({
@@ -100,12 +100,11 @@ const AnimeScreen = ({ navigation }) => {
           return {
             ...prev,
             Page: {
-              ...prev.Page,
               media: [
                 ...(prev.Page.media ?? []),
                 ...(fetchMoreResult?.Page.media ?? []),
               ],
-              pageInfo: fetchMoreResult?.Page.pageInfo,
+              pageInfo: fetchMoreResult.Page.pageInfo,
             },
           };
         },
@@ -113,13 +112,6 @@ const AnimeScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      searchInputRef.current.focus();
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
   const Card = ({ item }) => {
     return <AnimeCard item={item} navigation={navigation} />;
   };
@@ -133,7 +125,7 @@ const AnimeScreen = ({ navigation }) => {
         }}
       >
         <View
-          onTouchStart={() => navigation.navigate('AnimeSearchScreen')}
+          onTouchStart={() => navigation.replace('AnimeSearchScreen')}
           style={{
             backgroundColor: COLORS.redPrimary,
             zIndex: 10000,
@@ -147,33 +139,26 @@ const AnimeScreen = ({ navigation }) => {
           ref={searchInputRef}
           {...{
             goBackHandler,
-            searchText,
+            searchText: '',
             handleSearch,
             handleSearchSubmit,
             showBackButton: false,
           }}
         />
       </View>
-      {animeData.length === 0 &&
-        searchText &&
-        searchText !== '' &&
-        !loading && <Text style={styles.message}>No results found</Text>}
-      {animeData.length === 0 && searchText === '' && !loading && (
-        <Text style={styles.message}>Search Anime Here</Text>
-      )}
-      {loading ? (
+      {loading && (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.greenPrimary} />
         </View>
-      ) : (
-        <FlatList
-          data={animeData}
-          renderItem={Card}
-          keyExtractor={(item) => item.id}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={2}
-        />
       )}
+
+      <FlatList
+        data={animeData}
+        renderItem={Card}
+        keyExtractor={(item) => item.id.toString()}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={3}
+      />
     </View>
   );
 };
