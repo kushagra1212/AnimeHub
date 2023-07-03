@@ -21,13 +21,15 @@ import {
 import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { throttleFunc } from '../../utils';
+import { throttleFunc, typeOptionsCharacter } from '../../utils';
 import AnimeSearch from '../../components/molecules/Search';
 import AnimeCard from '../../components/molecules/AnimeCard';
 import { useFocusEffect } from '@react-navigation/native';
 import Search from '../../components/molecules/Search';
 import CharacterCard from '../../components/molecules/CharacterCard';
 
+import RNPickerSelect from 'react-native-picker-select';
+import { pickerSelectStyles } from '../News/AnimeNewsFeedScreen';
 const GET_CHARACTER_SEARCH = gql`
   query Query(
     $page: Int
@@ -49,6 +51,11 @@ const GET_CHARACTER_SEARCH = gql`
           full
         }
       }
+      pageInfo {
+        currentPage
+        hasNextPage
+        lastPage
+      }
     }
   }
 `;
@@ -58,19 +65,17 @@ const CharacterScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
   const [prevDate, setPrevDate] = useState(Date.now());
   const [queryText, setQueryText] = useState(null);
-  const page = 1;
+  const [sort, setSort] = useState('undefined');
+  const [page, setPage] = useState(1);
   const perPage = 10;
-  const { loading, data, fetchMore, error, refetch } = useQuery(
-    GET_CHARACTER_SEARCH,
-    {
-      variables: {
-        page: page,
-        perPage: perPage,
-        sort: ['FAVOURITES_DESC'],
-        search: queryText?.trim().toLowerCase() || null,
-      },
-    }
-  );
+  const { loading, data, fetchMore, error } = useQuery(GET_CHARACTER_SEARCH, {
+    variables: {
+      page: page,
+      perPage: perPage,
+      sort: sort === 'undefined' ? null : [sort],
+      search: queryText?.trim().toLowerCase() || queryText,
+    },
+  });
   const pageInfo = data?.Page.pageInfo;
 
   let characterData = data?.Page.characters ?? [];
@@ -84,14 +89,14 @@ const CharacterScreen = ({ navigation }) => {
     setSearchText(text);
     console.log(Date.now() - prevDate);
     if (Date.now() - prevDate > 300) {
-      setQueryText(text);
+      if (text === '') setQueryText(null);
+      else setQueryText(text);
       setPrevDate(Date.now());
     }
   };
   const handleSearchSubmit = () => {
     handleSearch(searchText);
   };
-  console.log('pageInfo', pageInfo, page);
   const handleLoadMore = () => {
     if (pageInfo?.hasNextPage) {
       fetchMore({
@@ -101,6 +106,7 @@ const CharacterScreen = ({ navigation }) => {
           return {
             ...prev,
             Page: {
+              ...prev.Page,
               characters: [
                 ...(prev.Page.characters ?? []),
                 ...(fetchMoreResult?.Page.characters ?? []),
@@ -111,6 +117,12 @@ const CharacterScreen = ({ navigation }) => {
         },
       });
     }
+  };
+
+  console.log(pageInfo);
+  const handleTypeChange = (type) => {
+    setSort(type);
+    setPage(1);
   };
 
   const Card = ({ item }) => {
@@ -142,7 +154,16 @@ const CharacterScreen = ({ navigation }) => {
           <ActivityIndicator size="large" color={COLORS.greenPrimary} />
         </View>
       )}
-
+      <RNPickerSelect
+        onValueChange={handleTypeChange}
+        items={typeOptionsCharacter}
+        value={sort}
+        style={pickerSelectStyles}
+        placeholder={{
+          label: 'Select a type...',
+          value: 'undefined',
+        }}
+      />
       <FlatList
         data={characterData}
         renderItem={Card}

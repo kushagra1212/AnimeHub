@@ -259,7 +259,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   );
 };
 
-const pickerSelectStyles = StyleSheet.create({
+export const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     fontSize: 16,
     paddingVertical: 12,

@@ -9,17 +9,7 @@ import {
 } from 'react-native';
 
 const CharacterCard = ({ item, navigation }) => {
-  const {
-    age,
-    bloodType,
-    description,
-    favourites,
-    gender,
-    id,
-    image,
-    name,
-    media,
-  } = item;
+  const { age, bloodType, favourites, gender, id, image, name } = item;
 
   return (
     <TouchableOpacity
@@ -34,24 +24,32 @@ const CharacterCard = ({ item, navigation }) => {
       />
       <View style={characterCardStyles.infoContainer}>
         <Text style={characterCardStyles.title}>{name.full}</Text>
-        <View style={characterCardStyles.fieldContainer}>
-          <Text style={characterCardStyles.fieldTitle}>Age:</Text>
-          <Text style={characterCardStyles.fieldValue}>{age}</Text>
-        </View>
-        <View style={characterCardStyles.fieldContainer}>
-          <Text style={characterCardStyles.fieldTitle}>Blood Type:</Text>
-          <Text style={characterCardStyles.fieldValue}>
-            {bloodType || 'Unknown'}
-          </Text>
-        </View>
-        <View style={characterCardStyles.fieldContainer}>
-          <Text style={characterCardStyles.fieldTitle}>Favourites:</Text>
-          <Text style={characterCardStyles.fieldValue}>{favourites}</Text>
-        </View>
-        <View style={characterCardStyles.fieldContainer}>
-          <Text style={characterCardStyles.fieldTitle}>Gender:</Text>
-          <Text style={characterCardStyles.fieldValue}>{gender}</Text>
-        </View>
+        {age && (
+          <View style={characterCardStyles.fieldContainer}>
+            <Text style={characterCardStyles.fieldTitle}>Age:</Text>
+            <Text style={characterCardStyles.fieldValue}>{age}</Text>
+          </View>
+        )}
+        {bloodType && (
+          <View style={characterCardStyles.fieldContainer}>
+            <Text style={characterCardStyles.fieldTitle}>Blood Type:</Text>
+            <Text style={characterCardStyles.fieldValue}>
+              {bloodType || 'Unknown'}
+            </Text>
+          </View>
+        )}
+        {favourites && (
+          <View style={characterCardStyles.fieldContainer}>
+            <Text style={characterCardStyles.fieldTitle}>Favourites:</Text>
+            <Text style={characterCardStyles.fieldValue}>{favourites}</Text>
+          </View>
+        )}
+        {gender && (
+          <View style={characterCardStyles.fieldContainer}>
+            <Text style={characterCardStyles.fieldTitle}>Gender:</Text>
+            <Text style={characterCardStyles.fieldValue}>{gender}</Text>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );

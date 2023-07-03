@@ -71,6 +71,7 @@ const CharactersSearchStackScreen: React.FC<
     <Stack.Screen name="CharacterScreen" component={CharacterScreen} />
 
     <Stack.Screen
+      options={{ headerShown: true }}
       name="CharacterDetailsScreen"
       component={CharacterDetailsScreen}
     />

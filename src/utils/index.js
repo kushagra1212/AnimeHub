@@ -43,3 +43,10 @@ export const typeOptions = [
   { label: 'Anime', value: 'ANIME' },
   { label: 'Manga', value: 'MANGA' },
 ];
+export const typeOptionsCharacter = [
+  { label: 'Most Favourites ', value: 'FAVOURITES_DESC' },
+  {
+    label: 'Least Favourites ',
+    value: 'FAVOURITES',
+  },
+];
