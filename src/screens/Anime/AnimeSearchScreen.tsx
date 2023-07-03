@@ -22,8 +22,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
 import { throttleFunc } from '../../utils';
-import AnimeSearch from '../../components/molecules/AnimeSearch';
-import AnimeCard from '../../components/molecules/RenderAnimeCard';
+import AnimeSearch from '../../components/molecules/Search';
+import AnimeCard from '../../components/molecules/AnimeCard';
+import Search from '../../components/molecules/Search';
 
 const GET_MEDIA_SEARCH = gql`
   query SearchAnime(
@@ -152,7 +153,7 @@ const AnimeSearchScreen = ({ navigation }) => {
   };
   return (
     <View style={styles.container}>
-      <AnimeSearch
+      <Search
         ref={searchInputRef}
         {...{
           goBackHandler,
@@ -160,6 +161,7 @@ const AnimeSearchScreen = ({ navigation }) => {
           handleSearch,
           handleSearchSubmit,
           showBackButton: true,
+          placeholder: 'Search Anime',
         }}
       />
       {animeData.length === 0 &&

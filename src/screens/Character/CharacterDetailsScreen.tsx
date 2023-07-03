@@ -5,7 +5,7 @@ type CharacterDetailsScreenProps = {};
 const CharacterDetailsScreen: React.FC<CharacterDetailsScreenProps> = () => {
   return (
     <View>
-      <Text>CharacterDetailsScreen </Text>{' '}
+      <Text>CharacterDetailsScreen </Text>
     </View>
   );
 };

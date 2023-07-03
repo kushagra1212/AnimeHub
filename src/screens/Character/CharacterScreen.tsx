@@ -26,71 +26,71 @@ import AnimeSearch from '../../components/molecules/Search';
 import AnimeCard from '../../components/molecules/AnimeCard';
 import { useFocusEffect } from '@react-navigation/native';
 import Search from '../../components/molecules/Search';
+import CharacterCard from '../../components/molecules/CharacterCard';
 
-const GET_MEDIA_SEARCH = gql`
-  query SearchAnime(
-    $search: String
-    $type: MediaType
+const GET_CHARACTER_SEARCH = gql`
+  query Query(
     $page: Int
     $perPage: Int
+    $sort: [CharacterSort]
+    $search: String
   ) {
     Page(page: $page, perPage: $perPage) {
-      media(search: $search, type: $type) {
+      characters(sort: $sort, search: $search) {
+        age
+        bloodType
+        favourites
+        gender
         id
-        title {
-          english
+        image {
+          large
         }
-        bannerImage
-        genres
-        tags {
-          name
+        name {
+          full
         }
-        rankings {
-          type
-          format
-          allTime
-          id
-        }
-        coverImage {
-          extraLarge
-        }
-      }
-      pageInfo {
-        hasNextPage
-        currentPage
       }
     }
   }
 `;
 
-const AnimeScreen = ({ navigation }) => {
+const CharacterScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
-
+  const [searchText, setSearchText] = useState('');
+  const [prevDate, setPrevDate] = useState(Date.now());
+  const [queryText, setQueryText] = useState(null);
   const page = 1;
   const perPage = 10;
   const { loading, data, fetchMore, error, refetch } = useQuery(
-    GET_MEDIA_SEARCH,
+    GET_CHARACTER_SEARCH,
     {
       variables: {
-        type: 'ANIME',
         page: page,
         perPage: perPage,
+        sort: ['FAVOURITES_DESC'],
+        search: queryText?.trim().toLowerCase() || null,
       },
     }
   );
   const pageInfo = data?.Page.pageInfo;
 
-  let media = data?.Page.media ?? [];
-  media = Array.from(new Map(media.map((item) => [item.id, item])).values());
-  const animeData = media.filter(
-    (item) => item.title.english !== null && !item.genres.includes('Hentai')
+  let characterData = data?.Page.characters ?? [];
+  characterData = Array.from(
+    new Map(characterData.map((item) => [item.id, item])).values()
   );
+
   const goBackHandler = () => {};
 
-  const handleSearch = (text: string) => {};
-
-  const handleSearchSubmit = () => {};
-
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+    console.log(Date.now() - prevDate);
+    if (Date.now() - prevDate > 300) {
+      setQueryText(text);
+      setPrevDate(Date.now());
+    }
+  };
+  const handleSearchSubmit = () => {
+    handleSearch(searchText);
+  };
   console.log('pageInfo', pageInfo, page);
   const handleLoadMore = () => {
     if (pageInfo?.hasNextPage) {
@@ -101,9 +101,9 @@ const AnimeScreen = ({ navigation }) => {
           return {
             ...prev,
             Page: {
-              media: [
-                ...(prev.Page.media ?? []),
-                ...(fetchMoreResult?.Page.media ?? []),
+              characters: [
+                ...(prev.Page.characters ?? []),
+                ...(fetchMoreResult?.Page.characters ?? []),
               ],
               pageInfo: fetchMoreResult.Page.pageInfo,
             },
@@ -114,7 +114,7 @@ const AnimeScreen = ({ navigation }) => {
   };
 
   const Card = ({ item }) => {
-    return <AnimeCard item={item} navigation={navigation} />;
+    return <CharacterCard {...{ item, navigation }} />;
   };
 
   return (
@@ -125,26 +125,15 @@ const AnimeScreen = ({ navigation }) => {
           backgroundColor: COLORS.black,
         }}
       >
-        <View
-          onTouchStart={() => navigation.replace('AnimeSearchScreen')}
-          style={{
-            backgroundColor: COLORS.redPrimary,
-            zIndex: 10000,
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            opacity: 0,
-          }}
-        ></View>
         <Search
           ref={searchInputRef}
           {...{
             goBackHandler,
-            searchText: '',
+            searchText,
             handleSearch,
             handleSearchSubmit,
             showBackButton: false,
-            placeholder: 'Search Anime',
+            placeholder: 'Search Anime Characters',
           }}
         />
       </View>
@@ -155,7 +144,7 @@ const AnimeScreen = ({ navigation }) => {
       )}
 
       <FlatList
-        data={animeData}
+        data={characterData}
         renderItem={Card}
         keyExtractor={(item) => item.id.toString()}
         onEndReached={handleLoadMore}
@@ -182,4 +171,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AnimeScreen;
+export default CharacterScreen;

@@ -12,9 +12,9 @@ import AnimeNewsFeedScreen from '../screens/News/AnimeNewsFeedScreen';
 import DetailedNewsScreen from '../screens/News/DetailedNewsScreen';
 import CharacterDetailsScreen from '../screens/Character/CharacterDetailsScreen';
 import AnimeDetailsScreen from '../screens/Anime/AnimeDetailsScreen';
-import CharacterSearchScreen from '../screens/Character/CharacterSearchScreen';
 import AnimeScreen from '../screens/Anime/AnimeScreen';
 import AnimeSearchScreen from '../screens/Anime/AnimeSearchScreen';
+import CharacterScreen from '../screens/Character/CharacterScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,7 +50,9 @@ const NewsStackScreen: React.FC<NewsStackScreenProps> = ({ navigation }) => {
 };
 
 export type CharacterSearchStackParamList = {
+  CharacterScreen: undefined;
   CharacterSearchScreen: undefined;
+
   CharacterDetailsScreen: { characterId: string };
 };
 
@@ -64,12 +66,10 @@ const CharactersSearchStackScreen: React.FC<
 > = ({ navigation }) => (
   <Stack.Navigator
     screenOptions={{ headerShown: false }}
-    initialRouteName="CharacterSearchScreen"
+    initialRouteName="CharacterScreen"
   >
-    <Stack.Screen
-      name="CharacterSearchScreen"
-      component={CharacterSearchScreen}
-    />
+    <Stack.Screen name="CharacterScreen" component={CharacterScreen} />
+
     <Stack.Screen
       name="CharacterDetailsScreen"
       component={CharacterDetailsScreen}
