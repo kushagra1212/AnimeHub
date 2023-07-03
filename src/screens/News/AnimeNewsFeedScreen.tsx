@@ -21,7 +21,6 @@ import {
   statusOptions,
   typeOptions,
 } from '../../utils';
-
 const GET_ANIME_NEWS = gql`
   query GetAnimeNews(
     $genre: String
@@ -62,6 +61,7 @@ const GET_ANIME_NEWS = gql`
 interface AnimeNewsFeedScreenProps {
   navigation: NativeStackNavigationProp<NewsStackParamList>;
 }
+
 
 const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   navigation,
@@ -214,7 +214,6 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           placeholder={{ label: 'Select Genre', value: 'All' }}
         />
       </View>
-
       <View style={styles.filterContainer}>
         <Text style={styles.filterLabel}>Type:</Text>
         <RNPickerSelect
@@ -225,7 +224,6 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           placeholder={{ label: 'Select Type', value: 'undefined' }}
         />
       </View>
-
       <View style={styles.filterContainer}>
         <Text style={styles.filterLabel}>Sort By:</Text>
         <RNPickerSelect
@@ -236,7 +234,6 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           placeholder={{ label: 'Select Sort', value: 'undefined' }}
         />
       </View>
-
       <View style={styles.filterContainer}>
         <Text style={styles.filterLabel}>Status:</Text>
         <RNPickerSelect
@@ -247,7 +244,6 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           placeholder={{ label: 'Select Status', value: 'undefined' }}
         />
       </View>
-
       <FlatList
         data={newsData}
         renderItem={renderNewsItem}
