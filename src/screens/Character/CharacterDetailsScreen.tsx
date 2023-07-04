@@ -10,7 +10,7 @@ import {
 import { CharacterSearchStackParamList } from '../../Navigation';
 import { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
-
+import { memo } from 'react';
 type CharacterDetailsScreenProps = {
   route: {
     params: {
@@ -228,4 +228,4 @@ const CharacterDetailsScreen = ({
   );
 };
 
-export default CharacterDetailsScreen;
+export default memo(CharacterDetailsScreen);

@@ -30,6 +30,8 @@ import CharacterCard from '../../components/molecules/CharacterCard';
 
 import RNPickerSelect from 'react-native-picker-select';
 import { pickerSelectStyles } from '../News/AnimeNewsFeedScreen';
+import { FlashList } from '@shopify/flash-list';
+
 const GET_CHARACTER_SEARCH = gql`
   query Query(
     $page: Int
@@ -119,7 +121,7 @@ const CharacterScreen = ({ navigation }) => {
     }
   };
 
-  console.log(pageInfo);
+  console.log(pageInfo, 'CharacterScreen');
   const handleTypeChange = (type) => {
     setSort(type);
     setPage(1);
@@ -164,13 +166,22 @@ const CharacterScreen = ({ navigation }) => {
           value: 'undefined',
         }}
       />
-      <FlatList
-        data={characterData}
-        renderItem={Card}
-        keyExtractor={(item) => item.id.toString()}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={3}
-      />
+
+      <View
+        style={{
+          flex: 1,
+          height: 1000,
+        }}
+      >
+        <FlashList
+          estimatedItemSize={2000}
+          data={characterData}
+          renderItem={Card}
+          keyExtractor={(item) => item.id.toString()}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={2}
+        />
+      </View>
     </View>
   );
 };

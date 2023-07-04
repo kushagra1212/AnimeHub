@@ -25,7 +25,7 @@ import { throttleFunc } from '../../utils';
 import AnimeSearch from '../../components/molecules/Search';
 import AnimeCard from '../../components/molecules/AnimeCard';
 import Search from '../../components/molecules/Search';
-
+import { FlashList } from '@shopify/flash-list';
 const GET_MEDIA_SEARCH = gql`
   query SearchAnime(
     $search: String
@@ -129,6 +129,7 @@ const AnimeSearchScreen = ({ navigation }) => {
           return {
             ...prev,
             Page: {
+              ...prev.Page,
               media: [
                 ...(prev.Page.media ?? []),
                 ...(fetchMoreResult?.Page.media ?? []),
@@ -176,13 +177,16 @@ const AnimeSearchScreen = ({ navigation }) => {
           <ActivityIndicator size="large" color={COLORS.greenPrimary} />
         </View>
       ) : (
-        <FlatList
-          data={animeData}
-          renderItem={Card}
-          keyExtractor={(item) => item.id.toString()}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={2}
-        />
+        <View style={{ flex: 1, height: 1000 }}>
+          <FlashList
+            estimatedItemSize={2000}
+            data={animeData}
+            renderItem={Card}
+            keyExtractor={(item) => item.id.toString()}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={2}
+          />
+        </View>
       )}
     </View>
   );

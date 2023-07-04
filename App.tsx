@@ -1,12 +1,13 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { LogBox, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, LogBox, StyleSheet, Text, View } from 'react-native';
 import TabNavigator from './src/Navigation';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
+
 LogBox.ignoreLogs([
   'Cache data may be lost when replacing the Page field of a Query object.',
 ]);
@@ -39,7 +40,7 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+    <View style={{ flex: 1, zIndex: -1 }} onLayout={onLayoutRootView}>
       <StatusBar style="auto" />
 
       <ApolloProvider client={client}>

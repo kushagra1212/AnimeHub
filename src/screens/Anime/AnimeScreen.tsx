@@ -26,7 +26,7 @@ import AnimeSearch from '../../components/molecules/Search';
 import AnimeCard from '../../components/molecules/AnimeCard';
 import { useFocusEffect } from '@react-navigation/native';
 import Search from '../../components/molecules/Search';
-
+import { FlashList } from '@shopify/flash-list';
 const GET_MEDIA_SEARCH = gql`
   query SearchAnime(
     $search: String
@@ -91,7 +91,6 @@ const AnimeScreen = ({ navigation }) => {
 
   const handleSearchSubmit = () => {};
 
-  console.log('pageInfo', pageInfo, page);
   const handleLoadMore = () => {
     if (pageInfo?.hasNextPage) {
       fetchMore({
@@ -101,6 +100,7 @@ const AnimeScreen = ({ navigation }) => {
           return {
             ...prev,
             Page: {
+              ...prev.Page,
               media: [
                 ...(prev.Page.media ?? []),
                 ...(fetchMoreResult?.Page.media ?? []),
@@ -112,7 +112,7 @@ const AnimeScreen = ({ navigation }) => {
       });
     }
   };
-
+  console.log(pageInfo, 'AnimeScreen');
   const Card = ({ item }) => {
     return <AnimeCard item={item} navigation={navigation} />;
   };
@@ -154,13 +154,16 @@ const AnimeScreen = ({ navigation }) => {
         </View>
       )}
 
-      <FlatList
-        data={animeData}
-        renderItem={Card}
-        keyExtractor={(item) => item.id.toString()}
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={3}
-      />
+      <View style={{ flex: 1, height: 800 }}>
+        <FlashList
+          estimatedItemSize={2000}
+          data={animeData}
+          renderItem={Card}
+          keyExtractor={(item) => item.id.toString()}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={2}
+        />
+      </View>
     </View>
   );
 };

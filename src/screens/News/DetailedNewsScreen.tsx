@@ -6,7 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { NewsStackParamList } from '../../Navigation';
 import { Media } from '../../types';
-
+import { memo } from 'react';
 type DetailedNewsScreenProps = {
   route: {
     params: {
@@ -338,4 +338,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DetailedNewsScreen;
+export default memo(DetailedNewsScreen);
