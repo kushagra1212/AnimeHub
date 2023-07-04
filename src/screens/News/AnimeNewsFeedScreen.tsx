@@ -36,6 +36,7 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableHighlight,
+  GestureResponderEvent,
 } from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import RNPickerSelect from 'react-native-picker-select';
@@ -122,6 +123,7 @@ const Neumorphism = () => {
 };
 const RoundedNeumorphicButton = () => {
   let svg = useSVG(require('../../../assets/filter.svg'));
+  if (!svg) return null;
   const canvasWidth = 100;
   const canvasHeight = 100;
   const svgWidth = 80;
@@ -169,74 +171,161 @@ const RoundedNeumorphicButton = () => {
 interface AnimeNewsFeedScreenProps {
   navigation: NativeStackNavigationProp<NewsStackParamList>;
 }
-const Genre = ({ genre }: { genre: string }) => {
-  const canvasWidth = genre.length * 15;
-  const canvasHeight = 120;
-  const roundedRectWidth = canvasWidth - 10;
-  const roundedRectHeight = canvasHeight - 80;
+
+const StickButton = ({
+  canvasWidth,
+  canvasHeight,
+  dx,
+  dy,
+  textColor = 'white',
+  textFontFamily = 'regular',
+  text = 'hello world',
+  onPress = (event: GestureResponderEvent) => null,
+}: {
+  canvasWidth: number;
+  canvasHeight: number;
+  dx: number;
+  dy: number;
+  textColor?: string;
+  textFontFamily?: string;
+  text?: string;
+  onPress?: (event: GestureResponderEvent) => void;
+}) => {
+  const roundedRectWidth = canvasWidth - 20;
+  const roundedRectHeight = canvasHeight - 20;
+
   return (
-    <Canvas
+    <TouchableOpacity
       style={{
-        height: canvasHeight,
         width: canvasWidth,
-        position: 'relative',
-        marginRight: 10,
-        marginTop: -canvasHeight / 3,
+        height: canvasHeight,
+        transform: [
+          {
+            translateX: -canvasWidth / 2 + dx,
+          },
+          {
+            translateY: -canvasHeight / 2 + dy,
+          },
+        ],
+        position: 'absolute',
+
+        backgroundColor: 'transparent',
       }}
+      onPress={onPress}
     >
-      <RoundedRect
-        width={roundedRectWidth}
-        height={roundedRectHeight}
-        r={52}
-        x={canvasWidth / 2 - roundedRectWidth / 2}
-        y={canvasHeight / 2 - roundedRectHeight / 2}
-        color="#222222"
+      <Canvas
+        style={{
+          height: canvasHeight,
+          width: canvasWidth,
+          position: 'absolute',
+          marginRight: 10,
+          backgroundColor: 'transparent',
+        }}
       >
-        <Shadow dx={2} dy={2} blur={1} color="#000000" inner />
-        <Shadow dx={5} dy={5} blur={5} color="#444444" inner />
-        <Shadow dx={-5} dy={-5} blur={10} color="#777777" />
-        <Shadow dx={-4} dy={-4} blur={5} color="#000000" inner />
-      </RoundedRect>
-    </Canvas>
+        <RoundedRect
+          width={roundedRectWidth}
+          height={roundedRectHeight}
+          r={32}
+          x={canvasWidth / 2 - roundedRectWidth / 2}
+          y={canvasHeight / 2 - roundedRectHeight / 2}
+          color="#222222"
+        >
+          <Shadow dx={2} dy={2} blur={1} color="#000000" inner />
+          <Shadow dx={5} dy={5} blur={5} color="#444444" inner />
+          <Shadow dx={-5} dy={-5} blur={10} color="#777777" />
+          <Shadow dx={-4} dy={-4} blur={5} color="#000000" inner />
+        </RoundedRect>
+      </Canvas>
+      <Text
+        style={{
+          color: textColor,
+          marginTop: canvasHeight / 2 - 12,
+          alignSelf: 'center',
+          fontFamily: textFontFamily,
+          justifyContent: 'center',
+        }}
+      >
+        {text}
+      </Text>
+    </TouchableOpacity>
   );
 };
-const ReadMoreButton = () => {
-  const canvasWidth = 120;
-  const canvasHeight = 120;
-  const roundedRectWidth = canvasWidth - 10;
-  const roundedRectHeight = canvasHeight - 80;
+const SeatedButton = ({
+  canvasWidth,
+  canvasHeight,
+  dx,
+  dy,
+  textColor = 'white',
+  textFontFamily = 'regular',
+  text = 'hello world',
+  onPress,
+}: {
+  canvasWidth: number;
+  canvasHeight: number;
+  dx: number;
+  dy: number;
+  textColor?: string;
+  textFontFamily?: string;
+  text?: string;
+  onPress: (event: GestureResponderEvent) => void;
+}) => {
+  const roundedRectWidth = canvasWidth - 20;
+  const roundedRectHeight = canvasHeight - 20;
+
   return (
-    <Canvas
+    <TouchableOpacity
       style={{
-        height: canvasHeight,
         width: canvasWidth,
-        position: 'relative',
-        marginRight: 10,
-        marginTop: -canvasHeight / 3,
+        height: canvasHeight,
+        transform: [
+          {
+            translateX: -canvasWidth / 2 + dx,
+          },
+          {
+            translateY: -canvasHeight / 2 + dy,
+          },
+        ],
+        position: 'absolute',
       }}
+      onPress={onPress}
     >
-      <RoundedRect
-        width={roundedRectWidth}
-        height={roundedRectHeight}
-        r={52}
-        x={canvasWidth / 2 - roundedRectWidth / 2}
-        y={canvasHeight / 2 - roundedRectHeight / 2}
-        color="#9F33FC"
+      <Canvas
+        style={{
+          height: canvasHeight,
+          width: canvasWidth,
+          position: 'absolute',
+          marginRight: 10,
+        }}
       >
-        <Shadow dx={3} dy={3} blur={0} color="#8E2DE2" inner />
-        <Shadow dx={-3} dy={-3} blur={0} color="#5602C8" inner />
-        {/* <Shadow dx={5} dy={5} blur={5} color="#444444" inner />
-        <Shadow dx={-5} dy={-5} blur={10} color="#8E2DE2" />
-        <Shadow dx={-4} dy={-4} blur={5} color="#8E2DE2" inner /> */}
-      </RoundedRect>
-    </Canvas>
+        <RoundedRect
+          width={roundedRectWidth}
+          height={roundedRectHeight}
+          r={32}
+          x={canvasWidth / 2 - roundedRectWidth / 2}
+          y={canvasHeight / 2 - roundedRectHeight / 2}
+          color="#9F33FC"
+        >
+          <Shadow dx={3} dy={1} blur={0} color="#8E2DE2" inner />
+          <Shadow dx={-3} dy={1} blur={0} color="#5602C8" inner />
+        </RoundedRect>
+      </Canvas>
+      <Text
+        style={{
+          color: textColor,
+          marginTop: canvasHeight / 2 - 12,
+          alignSelf: 'center',
+          fontFamily: textFontFamily,
+          justifyContent: 'center',
+        }}
+      >
+        {text}
+      </Text>
+    </TouchableOpacity>
   );
 };
 const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   navigation,
 }) => {
-  const svg = useSVG(require('../../../assets/img.svg'));
-
   const [modalVisible, setModalVisible] = useState(false);
 
   const [selectedGenre, setSelectedGenre] = useState('All');
@@ -250,19 +339,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   const perPage = 10;
   const ref = useCanvasRef();
   const fontSize = 20;
-  const fontRegular = useFont(
-    require('../../../assets/fonts/JetBrainsMonoNL-Regular.ttf'),
-    fontSize
-  );
 
-  const fontMedium = useFont(
-    require('../../../assets/fonts/JetBrainsMono-Medium.ttf'),
-    fontSize
-  );
-  const fontExtraBold = useFont(
-    require('../../../assets/fonts/JetBrainsMonoNL-ExtraBold.ttf'),
-    25
-  );
   const { loading, error, data, fetchMore } = useQuery<
     AnimeNewsData,
     AnimeNewsVariables
@@ -404,7 +481,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
               width: roundedRectWidth,
               height: roundedRectHeight,
               top: canvasWidth / 2 - roundedRectWidth / 2,
-              left: 10,
+              left: 20,
               backgroundColor: 'transparent',
             },
           ]}
@@ -423,12 +500,22 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
             source={{ html: item.description?.slice(0, 150) }}
           />
           {description && description?.length > 150 && (
-            <TouchableOpacity
-              onPress={() => handleNewsItemPress(item)}
-              style={{ marginLeft: 10 }}
+            <View
+              style={{
+                height: 50,
+              }}
             >
-              <ReadMoreButton />
-            </TouchableOpacity>
+              <SeatedButton
+                dx={70}
+                dy={20}
+                canvasHeight={60}
+                canvasWidth={140}
+                text="Read More"
+                textColor="white"
+                textFontFamily="semi-bold"
+                onPress={() => handleNewsItemPress(item)}
+              />
+            </View>
           )}
 
           {/* <FlatList
@@ -442,29 +529,24 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
 
           <View
             style={{
-              display: 'flex',
-              flexDirection: 'row',
-              height: 40,
               position: 'relative',
+              marginLeft: 60,
+              height: 60,
             }}
           >
             {item.genres
               ?.slice(0, Math.min(3, item.genres.length))
               .map((item, index) => (
-                <View key={index} style={{ position: 'relative' }}>
-                  <Genre genre={item} />
-                  <Text
-                    style={{
-                      color: COLORS.GraySecondary,
-                      fontFamily: 'semi-bold',
-                      position: 'absolute',
-                      top: 5,
-                      left: (item.length * 10) / 2 - item.length * 2,
-                    }}
-                  >
-                    {item}
-                  </Text>
-                </View>
+                <StickButton
+                  text={item}
+                  canvasHeight={60}
+                  canvasWidth={120}
+                  dx={120 * index}
+                  dy={30}
+                  textColor="white"
+                  textFontFamily="semi-bold"
+                  key={index}
+                />
               ))}
           </View>
 
