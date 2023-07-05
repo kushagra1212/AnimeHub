@@ -15,15 +15,15 @@ import AnimeDetailsScreen from '../screens/Anime/AnimeDetailsScreen';
 import AnimeScreen from '../screens/Anime/AnimeScreen';
 import AnimeSearchScreen from '../screens/Anime/AnimeSearchScreen';
 import CharacterScreen from '../screens/Character/CharacterScreen';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { InwardButton } from '../components/ui-components/CircularButton';
 const Stack = createNativeStackNavigator();
-import { View } from 'react-native';
+import { RegisteredStyle, View, ViewStyle } from 'react-native';
 import {
   AnimeTabBarIcon,
   CharacterTabBarIcon,
   NewsTabBarIcon,
 } from '../components/organs/tab-bar-icons';
+import Animated from 'react-native-reanimated';
+import { tabBarStyle } from '../utils';
 export type NewsStackParamList = {
   AnimeNewsFeedScreen: undefined;
   DetailedNewsScreen: { mediaId: string };
@@ -117,20 +117,7 @@ const TabNavigator: React.FC<TabNavigatorScreenProps> = ({}) => (
   <Tab.Navigator
     screenOptions={{
       headerShown: false,
-      tabBarStyle: {
-        backgroundColor: '#000',
-        borderTopColor: '#000',
-        height: 60,
-        borderTopEndRadius: 30,
-        borderTopStartRadius: 30,
-        elevation: 40,
-        position: 'absolute',
-        left: 0,
-        bottom: 0,
-        right: 0,
-        borderWidth: 2,
-        borderBottomWidth: 0,
-      },
+      tabBarStyle: tabBarStyle,
       tabBarLabel(props) {
         return null;
       },

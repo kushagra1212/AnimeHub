@@ -17,6 +17,7 @@ import AnimeCard from '../../components/molecules/AnimeCard';
 import Search from '../../components/molecules/Search';
 import { FlashList } from '@shopify/flash-list';
 import { GET_ANIMES_USING_SEARCH } from '../../graphql/queries/anime-queries';
+import { set } from 'react-native-reanimated';
 
 const AnimeSearchScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
@@ -24,7 +25,7 @@ const AnimeSearchScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
   const [prevDate, setPrevDate] = useState(Date.now());
   const [queryText, setQueryText] = useState('');
-  const page = 1;
+  const [animeResponse, setAnimeResponse] = useState(null);
   const perPage = 10;
   const { loading, data, fetchMore, error } = useQuery(
     GET_ANIMES_USING_SEARCH,
@@ -32,26 +33,29 @@ const AnimeSearchScreen = ({ navigation }) => {
       variables: {
         search: queryText.trim().toLowerCase(),
         type: 'ANIME',
-        page: page,
+        page: 1,
         perPage: perPage,
       },
     }
   );
-  const pageInfo = data?.Page.pageInfo;
 
-  let media = data?.Page.media ?? [];
+  useEffect(() => {
+    if (data && data?.Page && data?.Page?.media.length && !animeResponse) {
+      setAnimeResponse({
+        pageInfo: data.Page.pageInfo,
+        animes: data.Page.media,
+      });
+    }
+  }, [data]);
 
-  media = Array.from(new Map(media.map((item) => [item.id, item])).values());
-  const animeData = media.filter(
-    (item) => item.title.english !== null && !item.genres.includes('Hentai')
-  );
   const goBackHandler = () => {
-    navigation.replace('AnimeScreen');
+    navigation.goBack();
   };
 
   const handleSearch = (text: string) => {
     setSearchText(text);
-    console.log(Date.now() - prevDate);
+
+    setAnimeResponse(null);
     if (Date.now() - prevDate > 300) {
       setQueryText(text);
       setPrevDate(Date.now());
@@ -78,24 +82,23 @@ const AnimeSearchScreen = ({ navigation }) => {
   }, [navigation]);
 
   const handleLoadMore = () => {
-    if (pageInfo?.hasNextPage) {
+    if (animeResponse && animeResponse.pageInfo.hasNextPage) {
       fetchMore({
-        variables: { page: pageInfo.currentPage + 1 },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return {
-            ...prev,
-            Page: {
-              ...prev.Page,
-              media: [
-                ...(prev.Page.media ?? []),
-                ...(fetchMoreResult?.Page.media ?? []),
-              ],
-              pageInfo: fetchMoreResult.Page.pageInfo,
-            },
-          };
+        variables: {
+          page: animeResponse.pageInfo.currentPage + 1,
         },
-      });
+      })
+        .then((res) => {
+          setAnimeResponse((prev) => {
+            return {
+              pageInfo: res.data.Page.pageInfo,
+              animes: [...prev.animes, ...res.data.Page.media],
+            };
+          });
+        })
+        .catch((err) => {
+          console.log(err, 'Anime Response Error: AnimeSearchScreen');
+        });
     }
   };
 
@@ -122,29 +125,30 @@ const AnimeSearchScreen = ({ navigation }) => {
           placeholder: 'Search Anime',
         }}
       />
-      {animeData.length === 0 &&
-        searchText &&
-        searchText !== '' &&
-        !loading && <Text style={styles.message}>No results found</Text>}
-      {animeData.length === 0 && searchText === '' && !loading && (
+      {!animeResponse && searchText && searchText !== '' && !loading ? (
+        <Text style={styles.message}>No results found</Text>
+      ) : null}
+      {!animeResponse && searchText === '' && !loading ? (
         <Text style={styles.message}>Search Anime Here</Text>
-      )}
+      ) : null}
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.greenPrimary} />
         </View>
-      ) : (
+      ) : null}
+
+      {animeResponse && queryText && queryText !== '' ? (
         <View style={{ flex: 1, height: 1000 }}>
           <FlashList
             estimatedItemSize={2000}
-            data={animeData}
+            data={animeResponse.animes}
             renderItem={Card}
             keyExtractor={(item) => item.id.toString()}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={2}
           />
         </View>
-      )}
+      ) : null}
     </View>
   );
 };
@@ -154,10 +158,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   message: {
-    fontSize: 18,
+    fontSize: 48,
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 16,
+    color: COLORS.greenPrimary,
+    backgroundColor: 'red',
   },
   loadingContainer: {
     flex: 1,

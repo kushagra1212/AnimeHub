@@ -8,6 +8,7 @@ import {
   Text,
   Dimensions,
 } from 'react-native';
+import { memo } from 'react';
 import { useQuery, gql } from '@apollo/client';
 import { AnimeNewsData, AnimeNewsVariables, Media } from '../../types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -21,17 +22,33 @@ import { FlashList } from '@shopify/flash-list';
 import { useFocusEffect } from '@react-navigation/native';
 import { GET_ANIME_NEWS } from '../../graphql/queries/news-queries';
 import { LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
+import BottomSheet, {
+  BottomSheetRef,
+} from '../../components/molecules/BottomSheet';
+import FilterSheet from '../../components/molecules/FilterSheet';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import { tabBarStyle } from '../../utils';
+import Shadder from '../../components/ui-components/Shadder';
 const { width, height: SCREEEN_HEIGHT } = Dimensions.get('window');
 
 interface AnimeNewsFeedScreenProps {
   navigation: NativeStackNavigationProp<NewsStackParamList>;
 }
-
+interface Response {
+  pageInfo: {
+    hasNextPage: boolean;
+    currentPage: number;
+  };
+  media: Media[];
+}
 const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   navigation,
 }) => {
-  const [modalVisible, setModalVisible] = useState(false);
-
+  const sheetRef = React.useRef<BottomSheetRef>(null);
   const [selectedGenre, setSelectedGenre] = useState('All');
   const [selectedType, setSelectedType] =
     useState<AnimeNewsVariables['type']>('undefined');
@@ -39,7 +56,9 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     useState<AnimeNewsVariables['sort']>('undefined');
   const [selectedStatus, setSelectedStatus] =
     useState<AnimeNewsVariables['status']>('undefined');
-  const [page, setPage] = useState(1);
+
+  const [response, setResponse] = useState<Response | null>(null);
+  const opacity = useSharedValue(0);
   const perPage = 10;
 
   const { loading, error, data, fetchMore } = useQuery<
@@ -48,7 +67,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   >(GET_ANIME_NEWS, {
     variables: {
       genre: selectedGenre === 'All' ? undefined : selectedGenre,
-      page,
+      page: 1,
       perPage,
       sort: selectedSort === 'undefined' ? undefined : selectedSort,
       type: selectedType === 'undefined' ? undefined : selectedType,
@@ -69,6 +88,14 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
       };
     }, [navigation])
   );
+  useEffect(() => {
+    if (data && data?.Page && response === null) {
+      setResponse({
+        pageInfo: data.Page.pageInfo,
+        media: data.Page.media,
+      });
+    }
+  }, [data?.Page?.pageInfo?.currentPage]);
 
   // if (loading) {
   //   return (
@@ -86,58 +113,63 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   //   );
   // }
 
-  let newsData = data?.Page.media || [];
-
-  const pageInfo = data?.Page.pageInfo;
-  newsData = Array.from(
-    new Map(newsData.map((item) => [item.id, item])).values()
-  );
+  // newsData = Array.from(
+  //   new Map(newsData.map((item) => [item.id, item])).values()
+  // );
   const handleNewsItemPress = (item: Media) => {
     navigation.navigate('DetailedNewsScreen', { mediaId: item.id });
   };
 
   const handleGenreChange = (genre: string) => {
     setSelectedGenre(genre);
-    setPage(1);
   };
 
   const handleTypeChange = (type: AnimeNewsVariables['type']) => {
     setSelectedType(type);
-    setPage(1);
   };
 
   const handleSortChange = (sort: AnimeNewsVariables['sort']) => {
     setSelectedSort(sort);
-    setPage(1);
   };
 
   const handleStatusChange = (status: AnimeNewsVariables['status']) => {
     setSelectedStatus(status);
-    setPage(1);
   };
-  console.log(data?.Page.media.length, 'NewsData');
+
   const handleLoadMore = () => {
-    if (pageInfo?.hasNextPage) {
+    if (response && response.pageInfo.hasNextPage) {
       fetchMore({
-        variables: { page: pageInfo.currentPage + 1 },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return {
-            ...prev,
-            Page: {
-              ...prev.Page,
-              media: [
-                ...(prev.Page.media ?? []),
-                ...(fetchMoreResult?.Page.media ?? []),
-              ],
-              pageInfo: fetchMoreResult?.Page.pageInfo,
-            },
-          };
+        variables: {
+          page: response.pageInfo.currentPage + 1,
         },
-      });
+      })
+        .then((newData) => {
+          setResponse((prev) => {
+            return {
+              pageInfo: newData.data.Page.pageInfo,
+              media: [...prev.media, ...newData.data.Page.media],
+            };
+          });
+        })
+        .catch((err) => console.log(err, 'Handle Load More Error'));
     }
   };
-  console.log(pageInfo, 'NewsFeed');
+  const bottomSheetToggle = () => {
+    if (sheetRef.current?.isActive()) {
+      navigation.getParent().setOptions({
+        tabBarStyle: { ...tabBarStyle, display: 'flex' },
+      });
+      opacity.value = 0;
+      sheetRef.current?.hideBottomSheet();
+    } else {
+      navigation.getParent().setOptions({
+        tabBarStyle: { ...tabBarStyle, display: 'none' },
+      });
+      opacity.value = 0.5;
+      sheetRef.current?.showBottomSheet();
+    }
+  };
+
   const renderNewsItem = ({ item }: { item: Media }) => {
     if (item.title?.english === null) return null;
     return (
@@ -148,27 +180,42 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     );
   };
 
+  const AnimatedBackdropStyles = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(opacity.value, { duration: 200 }),
+      display: opacity.value === 0 ? 'none' : 'flex',
+    };
+  });
   return (
     <Background>
       <View style={{ flex: 1 }}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View></View>
-        </Modal>
-        <TouchableOpacity style={{ zIndex: 100 }} onPress={() => {}}>
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFillObject,
+            {
+              backgroundColor: 'black',
+              zIndex: 3,
+              height: SCREEEN_HEIGHT,
+              width: width,
+              opacity: 0,
+              position: 'absolute',
+            },
+            AnimatedBackdropStyles,
+          ]}
+          onTouchStart={bottomSheetToggle}
+        />
+        <BottomSheet bottomSheetToggle={bottomSheetToggle} ref={sheetRef}>
+          <FilterSheet />
+        </BottomSheet>
+        <View style={{ zIndex: 2 }}>
           <CircularButton
             canvasHeight={95}
             canvasWidth={95}
             dx={width - 65}
             dy={80}
+            onPress={bottomSheetToggle}
           />
-        </TouchableOpacity>
+        </View>
 
         {/* <View style={styles.filterContainer}>
         <Text style={styles.filterLabel}>Genre:</Text>
@@ -209,53 +256,19 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           placeholder={{ label: 'Select Status', value: 'undefined' }}
         />
       </View> */}
-        {newsData && newsData?.length ? (
+        {response ? (
           <View
             style={{
               marginTop: 120,
-              height: 800,
+              height: 1000,
               flex: 1,
             }}
           >
-            <View
-              style={{
-                height: 100,
-                position: 'absolute',
-                width: width,
-                zIndex: 1,
-              }}
-            >
-              <View
-                style={{
-                  height: 200,
-                  position: 'absolute',
-                  width: '100%',
-                  top: -140,
-                }}
-              >
-                <Svg height="100%" width="100%">
-                  <LinearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-                    <Stop offset="0" stopColor="#3E424B" stopOpacity="0.75" />
-                    <Stop offset="0.25" stopColor="#3E424B" stopOpacity="1" />
-                    <Stop offset="0.75" stopColor="#2E3136" stopOpacity="1" />
-
-                    <Stop offset="0.85" stopColor="#2E3136" stopOpacity="1" />
-                    <Stop offset="1" stopColor="#2E3136" stopOpacity="0" />
-                  </LinearGradient>
-                  <Rect
-                    x="0"
-                    y="0"
-                    width="100%"
-                    height="100%"
-                    fill="url(#fade)"
-                  />
-                </Svg>
-              </View>
-            </View>
+            <Shadder />
 
             <FlashList
-              estimatedItemSize={2000}
-              data={newsData}
+              estimatedItemSize={200}
+              data={response.media}
               renderItem={renderNewsItem}
               keyExtractor={(item) => item.id.toString()}
               onEndReached={handleLoadMore}
@@ -327,4 +340,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AnimeNewsFeedScreen;
+export default memo(AnimeNewsFeedScreen);

@@ -60,3 +60,17 @@ export const LOAD_FONTS = {
   'extra-light': require('../../assets/fonts/JetBrainsMonoNL-ExtraLight.ttf'),
   'extra-bold': require('../../assets/fonts/JetBrainsMonoNL-ExtraBold.ttf'),
 };
+export const tabBarStyle: any = {
+  backgroundColor: '#000',
+  borderTopColor: '#000',
+  height: 60,
+  borderTopEndRadius: 50,
+  borderTopStartRadius: 50,
+  elevation: 40,
+  position: 'absolute',
+  left: 0,
+  bottom: 0,
+  right: 0,
+  borderWidth: 2,
+  borderBottomWidth: 0,
+};

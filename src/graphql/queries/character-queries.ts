@@ -10,7 +10,6 @@ export const GET_CHARACTER_USING_SEARCH = gql`
     Page(page: $page, perPage: $perPage) {
       characters(sort: $sort, search: $search) {
         age
-        bloodType
         favourites
         gender
         id
@@ -24,7 +23,6 @@ export const GET_CHARACTER_USING_SEARCH = gql`
       pageInfo {
         currentPage
         hasNextPage
-        lastPage
       }
     }
   }

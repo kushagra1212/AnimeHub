@@ -34,7 +34,8 @@ const AnimeScreen = ({ navigation }) => {
 
   const page = 1;
   const perPage = 10;
-  const { loading, data, fetchMore, error, refetch } = useQuery(
+  const [animeResponse, setAnimeResponse] = useState(null);
+  const { loading, data, fetchMore, error } = useQuery(
     GET_ANIMES_USING_SEARCH,
     {
       variables: {
@@ -44,13 +45,7 @@ const AnimeScreen = ({ navigation }) => {
       },
     }
   );
-  const pageInfo = data?.Page.pageInfo;
 
-  let media = data?.Page.media ?? [];
-  media = Array.from(new Map(media.map((item) => [item.id, item])).values());
-  const animeData = media.filter(
-    (item) => item.title.english !== null && !item.genres.includes('Hentai')
-  );
   const goBackHandler = () => {};
 
   const handleSearch = (text: string) => {};
@@ -58,27 +53,32 @@ const AnimeScreen = ({ navigation }) => {
   const handleSearchSubmit = () => {};
 
   const handleLoadMore = () => {
-    if (pageInfo?.hasNextPage) {
+    if (animeResponse && animeResponse.pageInfo?.hasNextPage) {
       fetchMore({
-        variables: { page: pageInfo.currentPage + 1 },
-        updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult) return prev;
-          return {
-            ...prev,
-            Page: {
-              ...prev.Page,
-              media: [
-                ...(prev.Page.media ?? []),
-                ...(fetchMoreResult?.Page.media ?? []),
-              ],
-              pageInfo: fetchMoreResult.Page.pageInfo,
-            },
-          };
+        variables: {
+          page: animeResponse.pageInfo.currentPage + 1,
         },
-      });
+      })
+        .then((res) => {
+          setAnimeResponse((prev) => {
+            return {
+              pageInfo: res.data.Page.pageInfo,
+              animes: [...prev.animes, ...res.data.Page.media],
+            };
+          });
+        })
+        .catch((err) => console.log(err, 'Anime Response'));
     }
   };
-  console.log(pageInfo, 'AnimeScreen');
+
+  useEffect(() => {
+    if (data && data?.Page && !animeResponse) {
+      setAnimeResponse({
+        pageInfo: data.Page.pageInfo,
+        animes: data.Page.media,
+      });
+    }
+  }, [data]);
   const Card = ({ item }) => {
     return <AnimeCard item={item} navigation={navigation} />;
   };
@@ -92,7 +92,7 @@ const AnimeScreen = ({ navigation }) => {
         }}
       >
         <View
-          onTouchStart={() => navigation.replace('AnimeSearchScreen')}
+          onTouchStart={() => navigation.navigate('AnimeSearchScreen')}
           style={{
             backgroundColor: COLORS.redPrimary,
             zIndex: 10000,
@@ -114,22 +114,29 @@ const AnimeScreen = ({ navigation }) => {
           }}
         />
       </View>
-      {loading && (
+      {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={COLORS.greenPrimary} />
         </View>
-      )}
+      ) : null}
+      {error ? (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.message}>Something went wrong</Text>
+        </View>
+      ) : null}
 
-      <View style={{ flex: 1, height: 800 }}>
-        <FlashList
-          estimatedItemSize={2000}
-          data={animeData}
-          renderItem={Card}
-          keyExtractor={(item) => item.id.toString()}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={2}
-        />
-      </View>
+      {animeResponse ? (
+        <View style={{ flex: 1, height: 800 }}>
+          <FlashList
+            estimatedItemSize={2000}
+            data={animeResponse.animes}
+            renderItem={Card}
+            keyExtractor={(item) => item.id.toString()}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={2}
+          />
+        </View>
+      ) : null}
     </View>
   );
 };
