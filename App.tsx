@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 import { LOAD_FONTS } from './src/utils';
 import client from './src/graphql/client';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -26,15 +27,17 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <StatusBar style="auto" />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <StatusBar style="auto" />
 
-      <ApolloProvider client={client}>
-        <NavigationContainer>
-          <TabNavigator />
-        </NavigationContainer>
-      </ApolloProvider>
-    </View>
+        <ApolloProvider client={client}>
+          <NavigationContainer>
+            <TabNavigator />
+          </NavigationContainer>
+        </ApolloProvider>
+      </View>
+    </GestureHandlerRootView>
   );
 }
 

@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import Svg, { Defs, Rect, LinearGradient, Stop } from 'react-native-svg';
 
 const FROM_COLOR = '#424750';
-const TO_COLOR = '#202326';
+const TO_COLOR = '#000000';
 
 const Background = ({ children }) => {
   return (

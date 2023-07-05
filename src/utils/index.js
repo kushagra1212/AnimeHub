@@ -1,3 +1,4 @@
+import { Stop } from 'react-native-svg';
 export const throttleFunc = (func, interval) => {
   let prevDate = Date.now();
   return function (...args) {

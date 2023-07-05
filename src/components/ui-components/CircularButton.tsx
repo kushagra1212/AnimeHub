@@ -60,7 +60,7 @@ const CircularButton = ({
         >
           <Shadow dx={-3} dy={-3} blur={3} color="#2F353A" inner />
           <Shadow dx={-4} dy={-4} blur={10} color="#555555" />
-          <Shadow dx={5} dy={5} blur={5} color="#222222" />
+          <Shadow dx={5} dy={5} blur={1} color="#222222" />
           <Shadow dx={3} dy={3} blur={2} color="#1C1F22" inner />
         </RoundedRect>
       </Canvas>

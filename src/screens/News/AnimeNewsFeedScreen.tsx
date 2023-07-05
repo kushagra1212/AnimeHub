@@ -20,7 +20,8 @@ import NewsCard from '../../components/organs/NewsCard';
 import { FlashList } from '@shopify/flash-list';
 import { useFocusEffect } from '@react-navigation/native';
 import { GET_ANIME_NEWS } from '../../graphql/queries/news-queries';
-const { width, height } = Dimensions.get('window');
+import { LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
+const { width, height: SCREEEN_HEIGHT } = Dimensions.get('window');
 
 interface AnimeNewsFeedScreenProps {
   navigation: NativeStackNavigationProp<NewsStackParamList>;
@@ -138,6 +139,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   };
   console.log(pageInfo, 'NewsFeed');
   const renderNewsItem = ({ item }: { item: Media }) => {
+    if (item.title?.english === null) return null;
     return (
       <NewsCard
         item={item}
@@ -159,11 +161,11 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
         >
           <View></View>
         </Modal>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity style={{ zIndex: 100 }} onPress={() => {}}>
           <CircularButton
-            canvasHeight={90}
-            canvasWidth={90}
-            dx={width - 60}
+            canvasHeight={95}
+            canvasWidth={95}
+            dx={width - 65}
             dy={80}
           />
         </TouchableOpacity>
@@ -186,7 +188,6 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           value={selectedType}
           style={pickerSelectStyles}
           placeholder={{ label: 'Select Type', value: 'undefined' }}
-        />
       </View>
       <View style={styles.filterContainer}>
         <Text style={styles.filterLabel}>Sort By:</Text>
@@ -209,7 +210,49 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
         />
       </View> */}
         {newsData && newsData?.length ? (
-          <View style={{ marginTop: 150, height: 800, flex: 1 }}>
+          <View
+            style={{
+              marginTop: 120,
+              height: 800,
+              flex: 1,
+            }}
+          >
+            <View
+              style={{
+                height: 100,
+                position: 'absolute',
+                width: width,
+                zIndex: 1,
+              }}
+            >
+              <View
+                style={{
+                  height: 200,
+                  position: 'absolute',
+                  width: '100%',
+                  top: -140,
+                }}
+              >
+                <Svg height="100%" width="100%">
+                  <LinearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+                    <Stop offset="0" stopColor="#3E424B" stopOpacity="0.75" />
+                    <Stop offset="0.25" stopColor="#3E424B" stopOpacity="1" />
+                    <Stop offset="0.75" stopColor="#2E3136" stopOpacity="1" />
+
+                    <Stop offset="0.85" stopColor="#2E3136" stopOpacity="1" />
+                    <Stop offset="1" stopColor="#2E3136" stopOpacity="0" />
+                  </LinearGradient>
+                  <Rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    fill="url(#fade)"
+                  />
+                </Svg>
+              </View>
+            </View>
+
             <FlashList
               estimatedItemSize={2000}
               data={newsData}
