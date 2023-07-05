@@ -90,9 +90,18 @@ const AnimeSearchScreen = ({ navigation }) => {
       })
         .then((res) => {
           setAnimeResponse((prev) => {
+            const newAnimes = [
+              ...new Map(
+                [...prev.animes, ...res.data.Page.media].map((v) => [
+                  v.id.toString(),
+                  v,
+                ])
+              ).values(),
+            ];
+
             return {
               pageInfo: res.data.Page.pageInfo,
-              animes: [...prev.animes, ...res.data.Page.media],
+              animes: newAnimes,
             };
           });
         })

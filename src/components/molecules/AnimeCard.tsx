@@ -1,3 +1,4 @@
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { memo } from 'react';
 import {
   StyleSheet,
@@ -33,36 +34,38 @@ const AnimeCard = ({ item, navigation }) => {
         {rankings.length > 0 ? (
           <View>
             <Text style={animeCardStyles.rankingsTitle}>Rankings:</Text>
-            <FlatList
+            <FlashList
               data={rankings}
               keyExtractor={(item, index) => index.toString()}
               horizontal
               showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => (
+              renderItem={({ item }: { item: any }) => (
                 <Text style={animeCardStyles.ranking}>
                   {item.type} - {item.format}
                 </Text>
               )}
               contentContainerStyle={animeCardStyles.rankingsContainer}
+              estimatedItemSize={100}
             />
           </View>
         ) : null}
       </View>
-      {tags.length > 0 && (
+      {tags.length > 0 ? (
         <View style={animeCardStyles.tagsContainer}>
           <Text style={animeCardStyles.tagsTitle}>Tags:</Text>
-          <FlatList
+          <FlashList
             data={tags}
             keyExtractor={(item, index) => index.toString()}
             horizontal
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
+            renderItem={({ item }: { item: any }) => (
               <Text style={animeCardStyles.tag}>{item.name}</Text>
             )}
             contentContainerStyle={animeCardStyles.tagsFlatList}
+            estimatedItemSize={100}
           />
         </View>
-      )}
+      ) : null}
     </TouchableOpacity>
   );
 };
