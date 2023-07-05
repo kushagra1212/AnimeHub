@@ -11,6 +11,7 @@ import { CharacterSearchStackParamList } from '../../Navigation';
 import { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { memo } from 'react';
+import { GET_CHARACTER_DETAILS } from '../../graphql/queries/character-queries';
 type CharacterDetailsScreenProps = {
   route: {
     params: {
@@ -20,39 +21,12 @@ type CharacterDetailsScreenProps = {
   navigation: NativeStackNavigationProp<CharacterSearchStackParamList>;
 };
 
-const GET_CHARACTER_DETAILS = gql`
-  query Query($characterId: Int) {
-    Character(id: $characterId) {
-      description
-      favourites
-      gender
-      id
-      image {
-        large
-      }
-      name {
-        full
-      }
-      media {
-        nodes {
-          coverImage {
-            extraLarge
-          }
-        }
-      }
-      age
-      bloodType
-    }
-  }
-`;
-
 const CharacterDetailsScreen = ({
   route,
   navigation,
 }: CharacterDetailsScreenProps) => {
   const { characterId } = route.params;
   const [characterData, setCharacterData] = useState(null);
-  const [nightMode, setNightMode] = useState(false);
 
   const { loading, error, data } = useQuery(GET_CHARACTER_DETAILS, {
     variables: { characterId },
@@ -103,81 +77,8 @@ const CharacterDetailsScreen = ({
     bloodType,
   } = characterData;
 
-  const toggleNightMode = () => {
-    setNightMode(!nightMode);
-  };
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: nightMode ? '#111' : '#FFF',
-      padding: 16,
-    },
-    coverImage: {
-      width: '100%',
-      aspectRatio: 16 / 9,
-      borderRadius: 8,
-      marginBottom: 16,
-    },
-    title: {
-      fontSize: 32,
-      fontWeight: 'bold',
-      marginTop: 16,
-      marginBottom: 8,
-      color: nightMode ? '#0F0' : '#000',
-      textAlign: 'center',
-    },
-    fieldContainer: {
-      marginBottom: 16,
-    },
-    fieldTitle: {
-      fontWeight: 'bold',
-      fontSize: 16,
-      color: nightMode ? '#0F0' : '#000',
-      marginBottom: 4,
-    },
-    fieldValue: {
-      color: nightMode ? '#0F0' : '#666',
-      fontSize: 14,
-    },
-    mediaContainer: {
-      flexDirection: 'row',
-      marginTop: 16,
-      marginBottom: 32,
-      justifyContent: 'space-between',
-    },
-    mediaImage: {
-      width: 100,
-      height: 150,
-      borderRadius: 8,
-      marginBottom: 8,
-    },
-    nightModeButton: {
-      position: 'absolute',
-      top: 16,
-      right: 16,
-      padding: 8,
-      borderRadius: 16,
-      backgroundColor: nightMode ? '#0F0' : '#000',
-      zIndex: 10,
-    },
-    nightModeButtonText: {
-      color: nightMode ? '#000' : '#FFF',
-      fontWeight: 'bold',
-      textTransform: 'uppercase',
-    },
-  });
-
   return (
     <ScrollView style={styles.container}>
-      <TouchableOpacity
-        style={styles.nightModeButton}
-        onPress={toggleNightMode}
-      >
-        <Text style={styles.nightModeButtonText}>
-          {nightMode ? 'Day Mode' : 'Night Mode'}
-        </Text>
-      </TouchableOpacity>
       <Image style={styles.coverImage} source={{ uri: image.large }} />
       <Text style={styles.title}>{name.full}</Text>
       {age && (
@@ -227,5 +128,64 @@ const CharacterDetailsScreen = ({
     </ScrollView>
   );
 };
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFF',
+    padding: 16,
+  },
+  coverImage: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginTop: 16,
+    marginBottom: 8,
+    color: '#000',
+    textAlign: 'center',
+  },
+  fieldContainer: {
+    marginBottom: 16,
+  },
+  fieldTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#000',
+    marginBottom: 4,
+  },
+  fieldValue: {
+    color: '#666',
+    fontSize: 14,
+  },
+  mediaContainer: {
+    flexDirection: 'row',
+    marginTop: 16,
+    marginBottom: 32,
+    justifyContent: 'space-between',
+  },
+  mediaImage: {
+    width: 100,
+    height: 150,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  nightModeButton: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    padding: 8,
+    borderRadius: 16,
+    backgroundColor: '#000',
+    zIndex: 10,
+  },
+  nightModeButtonText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+});
 export default memo(CharacterDetailsScreen);

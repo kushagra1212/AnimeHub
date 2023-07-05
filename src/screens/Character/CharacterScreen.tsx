@@ -31,36 +31,7 @@ import CharacterCard from '../../components/molecules/CharacterCard';
 import RNPickerSelect from 'react-native-picker-select';
 import { pickerSelectStyles } from '../News/AnimeNewsFeedScreen';
 import { FlashList } from '@shopify/flash-list';
-
-const GET_CHARACTER_SEARCH = gql`
-  query Query(
-    $page: Int
-    $perPage: Int
-    $sort: [CharacterSort]
-    $search: String
-  ) {
-    Page(page: $page, perPage: $perPage) {
-      characters(sort: $sort, search: $search) {
-        age
-        bloodType
-        favourites
-        gender
-        id
-        image {
-          large
-        }
-        name {
-          full
-        }
-      }
-      pageInfo {
-        currentPage
-        hasNextPage
-        lastPage
-      }
-    }
-  }
-`;
+import { GET_CHARACTER_USING_SEARCH } from '../../graphql/queries/character-queries';
 
 const CharacterScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
@@ -70,14 +41,17 @@ const CharacterScreen = ({ navigation }) => {
   const [sort, setSort] = useState('undefined');
   const [page, setPage] = useState(1);
   const perPage = 10;
-  const { loading, data, fetchMore, error } = useQuery(GET_CHARACTER_SEARCH, {
-    variables: {
-      page: page,
-      perPage: perPage,
-      sort: sort === 'undefined' ? null : [sort],
-      search: queryText?.trim().toLowerCase() || queryText,
-    },
-  });
+  const { loading, data, fetchMore, error } = useQuery(
+    GET_CHARACTER_USING_SEARCH,
+    {
+      variables: {
+        page: page,
+        perPage: perPage,
+        sort: sort === 'undefined' ? null : [sort],
+        search: queryText?.trim().toLowerCase() || queryText,
+      },
+    }
+  );
   const pageInfo = data?.Page.pageInfo;
 
   let characterData = data?.Page.characters ?? [];

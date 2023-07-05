@@ -3,10 +3,10 @@ import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import RenderHTML from 'react-native-render-html';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation } from '@react-navigation/native';
 import { NewsStackParamList } from '../../Navigation';
 import { Media } from '../../types';
 import { memo } from 'react';
+import { GET_NEWS_DETAILS } from '../../graphql/queries/news-queries';
 type DetailedNewsScreenProps = {
   route: {
     params: {
@@ -16,63 +16,12 @@ type DetailedNewsScreenProps = {
   navigation: NativeStackNavigationProp<NewsStackParamList>;
 };
 
-const GET_MEDIA_DETAILS = gql`
-  query GetMediaDetails($mediaId: Int) {
-    Media(id: $mediaId) {
-      id
-      title {
-        english
-      }
-      coverImage {
-        extraLarge
-      }
-      description
-      genres
-      source
-      episodes
-      startDate {
-        year
-        month
-        day
-      }
-      endDate {
-        year
-        month
-        day
-      }
-      trailer {
-        id
-        site
-        thumbnail
-      }
-      staff {
-        edges {
-          node {
-            id
-            name {
-              full
-            }
-          }
-        }
-      }
-      studios {
-        edges {
-          node {
-            id
-            name
-          }
-        }
-      }
-    }
-  }
-`;
-
 const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
   route,
   navigation,
 }) => {
   const { mediaId } = route.params;
-  const { loading, error, data } = useQuery(GET_MEDIA_DETAILS, {
+  const { loading, error, data } = useQuery(GET_NEWS_DETAILS, {
     variables: {
       mediaId: parseInt(mediaId),
     },

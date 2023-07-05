@@ -7,7 +7,7 @@ const TO_COLOR = '#202326';
 
 const Background = ({ children }) => {
   return (
-    <View style={{ flex: 1 }}>
+    <View style={[{ flex: 1 }, StyleSheet.absoluteFillObject]}>
       <Svg height="100%" width="100%" style={StyleSheet.absoluteFillObject}>
         <Defs>
           <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">

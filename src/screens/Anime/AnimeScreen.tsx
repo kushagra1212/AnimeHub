@@ -27,41 +27,7 @@ import AnimeCard from '../../components/molecules/AnimeCard';
 import { useFocusEffect } from '@react-navigation/native';
 import Search from '../../components/molecules/Search';
 import { FlashList } from '@shopify/flash-list';
-const GET_MEDIA_SEARCH = gql`
-  query SearchAnime(
-    $search: String
-    $type: MediaType
-    $page: Int
-    $perPage: Int
-  ) {
-    Page(page: $page, perPage: $perPage) {
-      media(search: $search, type: $type) {
-        id
-        title {
-          english
-        }
-        bannerImage
-        genres
-        tags {
-          name
-        }
-        rankings {
-          type
-          format
-          allTime
-          id
-        }
-        coverImage {
-          extraLarge
-        }
-      }
-      pageInfo {
-        hasNextPage
-        currentPage
-      }
-    }
-  }
-`;
+import { GET_ANIMES_USING_SEARCH } from '../../graphql/queries/anime-queries';
 
 const AnimeScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
@@ -69,7 +35,7 @@ const AnimeScreen = ({ navigation }) => {
   const page = 1;
   const perPage = 10;
   const { loading, data, fetchMore, error, refetch } = useQuery(
-    GET_MEDIA_SEARCH,
+    GET_ANIMES_USING_SEARCH,
     {
       variables: {
         type: 'ANIME',

@@ -15,7 +15,7 @@ import AnimeDetailsScreen from '../screens/Anime/AnimeDetailsScreen';
 import AnimeScreen from '../screens/Anime/AnimeScreen';
 import AnimeSearchScreen from '../screens/Anime/AnimeSearchScreen';
 import CharacterScreen from '../screens/Character/CharacterScreen';
-
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 const Stack = createNativeStackNavigator();
 
 export type NewsStackParamList = {
@@ -111,12 +111,71 @@ const TabNavigator: React.FC<TabNavigatorScreenProps> = () => (
   <Tab.Navigator
     screenOptions={{
       headerShown: false,
+      tabBarStyle: {
+        backgroundColor: '#000',
+        borderTopColor: '#000',
+        height: 60,
+        borderTopEndRadius: 30,
+        borderTopStartRadius: 30,
+        elevation: 40,
+        position: 'absolute',
+        left: 0,
+        bottom: 0,
+        right: 0,
+        borderWidth: 2,
+        borderBottomWidth: 0,
+      },
+      tabBarLabel(props) {
+        return null;
+      },
+      tabBarIconStyle: {
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
     }}
     initialRouteName="News"
   >
-    <Tab.Screen name="News" component={NewsStackScreen} />
-    <Tab.Screen name="Characters" component={CharactersSearchStackScreen} />
-    <Tab.Screen name="Anime" component={AnimeStackScreen} />
+    <Tab.Screen
+      options={{
+        tabBarIcon: ({ focused }) => (
+          <Ionicons
+            name="md-newspaper-sharp"
+            size={34}
+            color={focused ? '#fff' : '#888'}
+          />
+        ),
+      }}
+      name="News"
+      component={NewsStackScreen}
+    />
+    <Tab.Screen
+      options={{
+        tabBarIcon: ({ focused }) => (
+          <Ionicons
+            name="md-person-sharp"
+            size={34}
+            color={focused ? '#fff' : '#888'}
+          />
+        ),
+      }}
+      name="Characters"
+      component={CharactersSearchStackScreen}
+    />
+    <Tab.Screen
+      options={{
+        tabBarIcon: ({ focused }) => (
+          <MaterialCommunityIcons
+            name="animation"
+            size={34}
+            color={focused ? '#fff' : '#888'}
+          />
+        ),
+      }}
+      name="Anime"
+      component={AnimeStackScreen}
+    />
   </Tab.Navigator>
 );
 

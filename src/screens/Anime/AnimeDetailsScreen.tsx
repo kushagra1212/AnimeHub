@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AnimeStackParamList } from '../../Navigation';
 import Reviews from '../../components/organs/Reviews';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { GET_ANIME_DETAILS } from '../../graphql/queries/anime-queries';
 
 type AnimeDetailsScreenProps = {
   route: {
@@ -22,92 +23,6 @@ type AnimeDetailsScreenProps = {
   };
   navigation: NativeStackNavigationProp<AnimeStackParamList>;
 };
-
-const GET_ANIME_DETAILS = gql`
-  query Query($mediaId: Int) {
-    Media(id: $mediaId) {
-      bannerImage
-      chapters
-      characters {
-        nodes {
-          id
-          age
-          bloodType
-          gender
-          image {
-            medium
-          }
-          isFavourite
-          name {
-            full
-          }
-        }
-      }
-      averageScore
-      coverImage {
-        extraLarge
-      }
-      description
-      duration
-      endDate {
-        day
-        month
-        year
-      }
-      episodes
-      format
-      genres
-      hashtag
-      id
-      isAdult
-      idMal
-      meanScore
-      popularity
-      nextAiringEpisode {
-        episode
-        id
-      }
-      title {
-        english
-      }
-      volumes
-      updatedAt
-      type
-      trending
-      trailer {
-        site
-        thumbnail
-      }
-      studios {
-        nodes {
-          name
-        }
-      }
-      startDate {
-        month
-        day
-        year
-      }
-      staff {
-        edges {
-          node {
-            image {
-              medium
-            }
-            id
-            gender
-          }
-        }
-      }
-      season
-      rankings {
-        context
-        id
-        rank
-      }
-    }
-  }
-`;
 
 const AnimeDetailsScreen: React.FC<AnimeDetailsScreenProps> = ({
   route,

@@ -8,59 +8,15 @@ import {
   useRef,
   useState,
 } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  FlatList,
-  Image,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { throttleFunc } from '../../utils';
-import AnimeSearch from '../../components/molecules/Search';
+
 import AnimeCard from '../../components/molecules/AnimeCard';
 import Search from '../../components/molecules/Search';
 import { FlashList } from '@shopify/flash-list';
-const GET_MEDIA_SEARCH = gql`
-  query SearchAnime(
-    $search: String
-    $type: MediaType
-    $page: Int
-    $perPage: Int
-  ) {
-    Page(page: $page, perPage: $perPage) {
-      media(search: $search, type: $type) {
-        id
-        title {
-          english
-        }
-        bannerImage
-        genres
-        tags {
-          name
-        }
-        rankings {
-          type
-          format
-          allTime
-          id
-        }
-        coverImage {
-          extraLarge
-        }
-      }
-      pageInfo {
-        hasNextPage
-        currentPage
-      }
-    }
-  }
-`;
+import { GET_ANIMES_USING_SEARCH } from '../../graphql/queries/anime-queries';
 
 const AnimeSearchScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
@@ -70,24 +26,25 @@ const AnimeSearchScreen = ({ navigation }) => {
   const [queryText, setQueryText] = useState('');
   const page = 1;
   const perPage = 10;
-  const { loading, data, fetchMore, error } = useQuery(GET_MEDIA_SEARCH, {
-    variables: {
-      search: queryText.trim().toLowerCase(),
-      type: 'ANIME',
-      page: page,
-      perPage: perPage,
-    },
-  });
+  const { loading, data, fetchMore, error } = useQuery(
+    GET_ANIMES_USING_SEARCH,
+    {
+      variables: {
+        search: queryText.trim().toLowerCase(),
+        type: 'ANIME',
+        page: page,
+        perPage: perPage,
+      },
+    }
+  );
   const pageInfo = data?.Page.pageInfo;
 
-  const animeData = useMemo(() => {
-    let media = data?.Page.media ?? [];
+  let media = data?.Page.media ?? [];
 
-    media = Array.from(new Map(media.map((item) => [item.id, item])).values());
-    return media.filter(
-      (item) => item.title.english !== null && !item.genres.includes('Hentai')
-    );
-  }, [data]);
+  media = Array.from(new Map(media.map((item) => [item.id, item])).values());
+  const animeData = media.filter(
+    (item) => item.title.english !== null && !item.genres.includes('Hentai')
+  );
   const goBackHandler = () => {
     navigation.replace('AnimeScreen');
   };

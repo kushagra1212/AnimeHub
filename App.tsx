@@ -7,27 +7,13 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client';
 import { useFonts } from 'expo-font';
 import { useCallback } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-
-LogBox.ignoreLogs([
-  'Cache data may be lost when replacing the Page field of a Query object.',
-]);
+import { LOAD_FONTS } from './src/utils';
+import client from './src/graphql/client';
 
 SplashScreen.preventAutoHideAsync();
-const client = new ApolloClient({
-  uri: 'https://graphql.anilist.co',
-  cache: new InMemoryCache(),
-});
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    'bold-itatic': require('./assets/fonts/JetBrainsMono-BoldItalic.ttf'),
-    medium: require('./assets/fonts/JetBrainsMono-Medium.ttf'),
-    'semi-bold': require('./assets/fonts/JetBrainsMono-SemiBold.ttf'),
-    regular: require('./assets/fonts/JetBrainsMonoNL-Regular.ttf'),
-    thin: require('./assets/fonts/JetBrainsMonoNL-Thin.ttf'),
-    'extra-light': require('./assets/fonts/JetBrainsMonoNL-ExtraLight.ttf'),
-    'extra-bold': require('./assets/fonts/JetBrainsMonoNL-ExtraBold.ttf'),
-  });
+  const [fontsLoaded] = useFonts(LOAD_FONTS);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -40,7 +26,7 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1, zIndex: -1 }} onLayout={onLayoutRootView}>
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <StatusBar style="auto" />
 
       <ApolloProvider client={client}>

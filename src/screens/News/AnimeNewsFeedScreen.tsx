@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Shadow,
-  RoundedRect,
-  Canvas,
-  useCanvasRef,
-  vec,
-  Vertices,
-} from '@shopify/react-native-skia';
-import {
   View,
   FlatList,
   TouchableOpacity,
@@ -17,61 +9,18 @@ import {
   Dimensions,
 } from 'react-native';
 import { useQuery, gql } from '@apollo/client';
-import RNPickerSelect from 'react-native-picker-select';
-import RenderHTML from 'react-native-render-html';
 import { AnimeNewsData, AnimeNewsVariables, Media } from '../../types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NewsStackParamList } from '../../Navigation';
 import { COLORS, SIZES } from '../../theme';
-
-import { Ionicons, Entypo, Feather, FontAwesome } from '@expo/vector-icons';
-import SeatedButton from '../../components/ui-components/SeatedButton';
-import StickButton from '../../components/ui-components/StickButton';
 import CircularButton from '../../components/ui-components/CircularButton';
-import { memo } from 'react';
+
 import Background from '../../components/ui-components/Background';
 import NewsCard from '../../components/organs/NewsCard';
 import { FlashList } from '@shopify/flash-list';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { GET_ANIME_NEWS } from '../../graphql/queries/news-queries';
 const { width, height } = Dimensions.get('window');
-
-const GET_ANIME_NEWS = gql`
-  query GetAnimeNews(
-    $genre: String
-    $page: Int
-    $perPage: Int
-    $type: MediaType
-    $status: MediaStatus
-    $sort: [MediaSort]
-  ) {
-    Page(page: $page, perPage: $perPage) {
-      pageInfo {
-        hasNextPage
-        currentPage
-      }
-      media(genre: $genre, type: $type, status: $status, sort: $sort) {
-        id
-        title {
-          english
-        }
-        coverImage {
-          extraLarge
-        }
-        description
-        genres
-        source
-        episodes
-        startDate {
-          year
-        }
-        endDate {
-          year
-        }
-      }
-    }
-  }
-`;
 
 interface AnimeNewsFeedScreenProps {
   navigation: NativeStackNavigationProp<NewsStackParamList>;
@@ -90,7 +39,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   const [selectedStatus, setSelectedStatus] =
     useState<AnimeNewsVariables['status']>('undefined');
   const [page, setPage] = useState(1);
-  const perPage = 1;
+  const perPage = 10;
 
   const { loading, error, data, fetchMore } = useQuery<
     AnimeNewsData,
@@ -136,10 +85,12 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   //   );
   // }
 
-  const newsData = data?.Page.media;
+  let newsData = data?.Page.media || [];
 
   const pageInfo = data?.Page.pageInfo;
-
+  newsData = Array.from(
+    new Map(newsData.map((item) => [item.id, item])).values()
+  );
   const handleNewsItemPress = (item: Media) => {
     navigation.navigate('DetailedNewsScreen', { mediaId: item.id });
   };
@@ -163,7 +114,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     setSelectedStatus(status);
     setPage(1);
   };
-  console.log({ data }, 'NewsData');
+  console.log(data?.Page.media.length, 'NewsData');
   const handleLoadMore = () => {
     if (pageInfo?.hasNextPage) {
       fetchMore({
@@ -257,18 +208,18 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           placeholder={{ label: 'Select Status', value: 'undefined' }}
         />
       </View> */}
-        {newsData?.length && (
+        {newsData && newsData?.length ? (
           <View style={{ marginTop: 150, height: 800, flex: 1 }}>
             <FlashList
               estimatedItemSize={2000}
               data={newsData}
               renderItem={renderNewsItem}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.id.toString()}
               onEndReached={handleLoadMore}
               onEndReachedThreshold={2}
             />
           </View>
-        )}
+        ) : null}
       </View>
     </Background>
   );
