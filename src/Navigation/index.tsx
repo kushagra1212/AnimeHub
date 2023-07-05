@@ -16,8 +16,14 @@ import AnimeScreen from '../screens/Anime/AnimeScreen';
 import AnimeSearchScreen from '../screens/Anime/AnimeSearchScreen';
 import CharacterScreen from '../screens/Character/CharacterScreen';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { InwardButton } from '../components/ui-components/CircularButton';
 const Stack = createNativeStackNavigator();
-
+import { View } from 'react-native';
+import {
+  AnimeTabBarIcon,
+  CharacterTabBarIcon,
+  NewsTabBarIcon,
+} from '../components/organs/tab-bar-icons';
 export type NewsStackParamList = {
   AnimeNewsFeedScreen: undefined;
   DetailedNewsScreen: { mediaId: string };
@@ -107,7 +113,7 @@ const AnimeStackScreen: React.FC<AnimeStackScreenProps> = ({ navigation }) => (
 const Tab = createBottomTabNavigator();
 
 export type TabNavigatorScreenProps = {};
-const TabNavigator: React.FC<TabNavigatorScreenProps> = () => (
+const TabNavigator: React.FC<TabNavigatorScreenProps> = ({}) => (
   <Tab.Navigator
     screenOptions={{
       headerShown: false,
@@ -139,39 +145,21 @@ const TabNavigator: React.FC<TabNavigatorScreenProps> = () => (
   >
     <Tab.Screen
       options={{
-        tabBarIcon: ({ focused }) => (
-          <Ionicons
-            name="md-newspaper-sharp"
-            size={34}
-            color={focused ? '#fff' : '#888'}
-          />
-        ),
+        tabBarIcon: ({ focused }) => <NewsTabBarIcon focused={focused} />,
       }}
       name="News"
       component={NewsStackScreen}
     />
     <Tab.Screen
       options={{
-        tabBarIcon: ({ focused }) => (
-          <Ionicons
-            name="md-person-sharp"
-            size={34}
-            color={focused ? '#fff' : '#888'}
-          />
-        ),
+        tabBarIcon: ({ focused }) => <CharacterTabBarIcon focused={focused} />,
       }}
       name="Characters"
       component={CharactersSearchStackScreen}
     />
     <Tab.Screen
       options={{
-        tabBarIcon: ({ focused }) => (
-          <MaterialCommunityIcons
-            name="animation"
-            size={34}
-            color={focused ? '#fff' : '#888'}
-          />
-        ),
+        tabBarIcon: ({ focused }) => <AnimeTabBarIcon focused={focused} />,
       }}
       name="Anime"
       component={AnimeStackScreen}

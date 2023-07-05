@@ -66,7 +66,7 @@ const NewsCard = ({ item, handleNewsItemPress }) => {
           baseStyle={baseStyleHtmlDesc}
           source={{ html: item.description?.slice(0, 150) }}
         />
-        {description && description?.length > 150 && (
+        {description && description?.length > 150 ? (
           <View
             style={{
               height: 50,
@@ -89,7 +89,7 @@ const NewsCard = ({ item, handleNewsItemPress }) => {
               color="white"
             />
           </View>
-        )}
+        ) : null}
 
         <View
           style={{
@@ -119,7 +119,7 @@ const NewsCard = ({ item, handleNewsItemPress }) => {
             keyExtractor={(item) => item.toString()}
           />
         </View>
-        {item.episodes && (
+        {item.episodes ? (
           <Text
             style={{
               color: COLORS.white,
@@ -133,7 +133,7 @@ const NewsCard = ({ item, handleNewsItemPress }) => {
             Episodes: {item.episodes}{' '}
             <FontAwesome name="th-list" size={20} color="white" />
           </Text>
-        )}
+        ) : null}
         <View
           style={{
             display: 'flex',
@@ -141,25 +141,25 @@ const NewsCard = ({ item, handleNewsItemPress }) => {
             justifyContent: 'space-around',
           }}
         >
-          {source && (
+          {source ? (
             <View>
               <Text style={styles.cardValue}>{source}</Text>
               <Text style={styles.cardKey}>Source</Text>
             </View>
-          )}
+          ) : null}
 
-          {item.startDate?.year && (
+          {item.startDate?.year ? (
             <View>
               <Text style={styles.cardValue}>{item.startDate.year}</Text>
               <Text style={styles.cardKey}>Start Date</Text>
             </View>
-          )}
-          {item.endDate?.year && (
+          ) : null}
+          {item.endDate?.year ? (
             <View>
               <Text style={styles.cardValue}>{item.endDate.year}</Text>
               <Text style={styles.cardKey}>End Date</Text>
             </View>
-          )}
+          ) : null}
         </View>
       </View>
     </View>
