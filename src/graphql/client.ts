@@ -10,9 +10,19 @@ const defaultOptions: DefaultOptions = {
   },
 };
 const client = new ApolloClient({
-  uri: 'https://graphql.anilist.co',
-  cache: new InMemoryCache(),
   defaultOptions: defaultOptions,
+  uri: 'https://graphql.anilist.co',
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          Page: {
+            keyArgs: false,
+          },
+        },
+      },
+    },
+  }),
 });
 
 export default client;

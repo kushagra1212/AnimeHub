@@ -1,4 +1,7 @@
+import { Dimensions } from 'react-native';
 import { Stop } from 'react-native-svg';
+export const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
+  Dimensions.get('window');
 export const throttleFunc = (func, interval) => {
   let prevDate = Date.now();
   return function (...args) {

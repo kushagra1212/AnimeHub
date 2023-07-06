@@ -7,9 +7,10 @@ import {
   Modal,
   Text,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 import { memo } from 'react';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql, useLazyQuery } from '@apollo/client';
 import { AnimeNewsData, AnimeNewsVariables, Media } from '../../types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NewsStackParamList } from '../../Navigation';
@@ -58,10 +59,11 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     useState<AnimeNewsVariables['status']>(undefined);
   const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [response, setResponse] = useState<Response | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const opacity = useSharedValue(0);
-  const perPage = 3;
+  const perPage = 10;
 
-  const { loading, error, data, fetchMore } = useQuery<
+  const { data, fetchMore, loading, error } = useQuery<
     AnimeNewsData,
     AnimeNewsVariables
   >(GET_ANIME_NEWS, {
@@ -74,33 +76,28 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
       status: selectedStatus,
     },
   });
-  useFocusEffect(
-    React.useCallback(() => {
-      const unsubscribe = navigation.addListener('focus', () => {
-        // Code to execute when the screen gains focus (returns to screen)
-        console.log('Screen is focused');
-      });
 
-      return () => {
-        unsubscribe();
-        // Code to execute when the screen loses focus
-        console.log('Screen lost focus');
-      };
-    }, [navigation])
-  );
-  useEffect(() => {
-    if (data && data?.Page && response === null) {
-      setResponse({
-        pageInfo: data.Page.pageInfo,
-        media: data.Page.media,
-      });
-    }
-  }, [
-    data?.Page?.pageInfo?.currentPage,
-    selectedGenre,
-    selectedType,
-    selectedSort,
-  ]);
+  const AnimatedBackdropStyles = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(opacity.value, { duration: 200 }),
+      display: opacity.value === 0 ? 'none' : 'flex',
+    };
+  });
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     const unsubscribe = navigation.addListener('focus', () => {
+  //       // Code to execute when the screen gains focus (returns to screen)
+  //       console.log('Screen is focused');
+  //     });
+
+  //     return () => {
+  //       unsubscribe();
+  //       // Code to execute when the screen loses focus
+  //       console.log('Screen lost focus');
+  //     };
+  //   }, [navigation])
+  // );
 
   const handleNewsItemPress = (item: Media) => {
     setShowBottomSheet(false);
@@ -128,27 +125,29 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   };
 
   const handleLoadMore = () => {
-    if (response && response.pageInfo.hasNextPage && !loading) {
+    if (!response?.pageInfo.hasNextPage) return;
+
+    if (!isLoading) {
+      setIsLoading(true);
       fetchMore({
         variables: {
-          page: response.pageInfo.currentPage + 1,
+          page: response?.pageInfo.currentPage + 1,
+          perPage,
         },
       })
-        .then((newData) => {
-          setResponse((prev) => {
-            let newMedia = null;
-            if (prev)
-              newMedia = ArrNoDupe([...prev.media, ...newData.data.Page.media]);
-            else newMedia = newData.data.Page.media;
-            return {
-              pageInfo: newData.data.Page.pageInfo,
-              media: newMedia,
-            } as Response;
+        .then((res) => {
+          setResponse({
+            pageInfo: res.data.Page.pageInfo,
+            media: [...response.media, ...res.data.Page.media],
           });
         })
-        .catch((err) => console.log(err, 'Handle Load More Error'));
+        .catch((err) => console.log(err))
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
+
   const bottomSheetToggle = () => {
     if (sheetRef.current?.isActive()) {
       sheetRef.current?.hideBottomSheet();
@@ -171,6 +170,18 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (!response && data) {
+      setResponse({
+        pageInfo: data.Page.pageInfo,
+        media: data.Page.media,
+      });
+    }
+  }, [data]);
+
+  if (error) {
+    return <View>Something went wrong</View>;
+  }
   const renderNewsItem = ({ item }: { item: Media }) => {
     if (item.title?.english === null) return null;
     return (
@@ -181,12 +192,6 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     );
   };
 
-  const AnimatedBackdropStyles = useAnimatedStyle(() => {
-    return {
-      opacity: withTiming(opacity.value, { duration: 200 }),
-      display: opacity.value === 0 ? 'none' : 'flex',
-    };
-  });
   return (
     <Background>
       <View style={{ flex: 1 }}>
@@ -207,6 +212,13 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
             bottomSheetToggle();
           }}
         />
+
+        {loading || isLoading ? (
+          <View>
+            <ActivityIndicator size="large" color={COLORS.primary} />
+          </View>
+        ) : null}
+
         {showBottomSheet ? (
           <BottomSheet bottomSheetToggle={bottomSheetToggle} ref={sheetRef}>
             <FilterSheet
@@ -236,20 +248,20 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
         <View
           style={{
             marginTop: 120,
-            height: 1000,
+            height: 800,
             flex: 1,
-            paddingBottom: 20,
+            paddingBottom: 25,
           }}
         >
           <Shadder />
           {response ? (
             <FlashList
-              estimatedItemSize={200}
+              estimatedItemSize={2000}
               data={response.media}
               renderItem={renderNewsItem}
               keyExtractor={(item) => item.id.toString()}
               onEndReached={handleLoadMore}
-              onEndReachedThreshold={2}
+              onEndReachedThreshold={0.5}
             />
           ) : null}
         </View>

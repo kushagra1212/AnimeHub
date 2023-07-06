@@ -159,3 +159,79 @@ export const InwardButton = ({
     </View>
   );
 };
+export const InwardButtonElevated = ({
+  canvasWidth,
+  canvasHeight,
+  dx,
+  dy,
+  textColor = 'white',
+  textFontFamily = 'regular',
+  text = 'hello world',
+  onPress = (event: GestureResponderEvent) => null,
+  children,
+  focused,
+  roundedRectWidth = 30,
+  roundedRectHeight = 30,
+}: {
+  canvasWidth: number;
+  canvasHeight: number;
+  dx: number;
+  dy: number;
+  textColor?: string;
+  textFontFamily?: string;
+  text?: string;
+  onPress?: (event: GestureResponderEvent) => void;
+  children: React.ReactNode;
+  focused: boolean;
+  roundedRectWidth?: number;
+  roundedRectHeight?: number;
+}) => {
+  return (
+    <TouchableOpacity
+      style={{
+        width: canvasWidth,
+        height: canvasHeight,
+        transform: [
+          {
+            translateX: -canvasWidth / 2 + dx,
+          },
+          {
+            translateY: -canvasHeight / 2 + dy,
+          },
+        ],
+        position: 'absolute',
+      }}
+      onPress={onPress}
+    >
+      {focused ? (
+        <Canvas
+          style={{
+            height: canvasHeight,
+            width: canvasWidth,
+            position: 'absolute',
+            marginRight: 10,
+          }}
+        >
+          <RoundedRect
+            width={roundedRectWidth}
+            height={roundedRectHeight}
+            r={30}
+            x={canvasWidth / 2 - roundedRectWidth / 2}
+            y={canvasHeight / 2 - roundedRectHeight / 2}
+            color="#2F353A"
+          >
+            <Shadow dx={-5} dy={-5} blur={13} color="#777777" />
+            <Shadow dx={5} dy={5} blur={13} color="#000000" />
+
+            <Shadow dx={-2} dy={-2} blur={13} color="#111222" inner />
+            {/* <Shadow dx={-4} dy={-4} blur={10} color="#555555" />
+          <Shadow dx={5} dy={5} blur={5} color="#222222" />
+          <Shadow dx={3} dy={3} blur={2} color="#1C1F22" inner /> */}
+          </RoundedRect>
+        </Canvas>
+      ) : null}
+
+      {children}
+    </TouchableOpacity>
+  );
+};

@@ -61,11 +61,13 @@ const NewsCard = ({ item, handleNewsItemPress }) => {
       >
         <Text style={styles.title}>{item.title.english}</Text>
 
-        <RenderHTML
-          contentWidth={200}
-          baseStyle={baseStyleHtmlDesc}
-          source={{ html: item.description?.slice(0, 150) }}
-        />
+        {item.description && item.description?.length ? (
+          <RenderHTML
+            contentWidth={200}
+            baseStyle={baseStyleHtmlDesc}
+            source={{ html: item.description?.slice(0, 150) }}
+          />
+        ) : null}
         {description && description?.length > 150 ? (
           <View
             style={{

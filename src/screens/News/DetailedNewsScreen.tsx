@@ -7,7 +7,17 @@ import { NewsStackParamList } from '../../Navigation';
 import { Media } from '../../types';
 import { memo } from 'react';
 import { GET_NEWS_DETAILS } from '../../graphql/queries/news-queries';
-import { tabBarStyle } from '../../utils';
+import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
+import { InwardButtonElevated } from '../../components/ui-components/CircularButton';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { COLORS } from '../../theme';
+import { Dimensions } from 'react-native';
+import Background from '../../components/ui-components/Background';
+import { ImageCardNeon } from '../../components/ui-components/ImageCard';
+import { FlashList } from '@shopify/flash-list';
+import StickButton from '../../components/ui-components/StickButton';
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 type DetailedNewsScreenProps = {
   route: {
     params: {
@@ -29,22 +39,22 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
   });
 
   useEffect(() => {
-    // if (navigation && data?.Media) {
-    //   navigation.setOptions({
-    //     title: data.Media.title.english,
-    //   });
-    //   navigation.getParent()?.setOptions({
-    //     tabBarStyle: {
-    //       ...tabBarStyle,
-    //       display: 'none',
-    //     },
-    //   });
-    // }
-    // return () => {
-    //   navigation.getParent()?.setOptions({
-    //     tabBarStyle: undefined,
-    //   });
-    // };
+    if (navigation && data?.Media) {
+      navigation.setOptions({
+        title: data.Media.title.english,
+      });
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          ...tabBarStyle,
+          display: 'none',
+        },
+      });
+    }
+    return () => {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: tabBarStyle,
+      });
+    };
   }, [navigation, data?.Media]);
 
   if (loading) {
@@ -62,96 +72,173 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
       </View>
     );
   }
-
+  const goBackHandler = () => {
+    navigation.goBack();
+  };
   const media: Media = data?.Media;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        source={{ uri: media.coverImage.extraLarge }}
-        style={styles.coverImage}
-      />
-      <ScrollView style={styles.content}>
-        <Text style={styles.title}>{data.Media.title.english}</Text>
-        <View style={styles.detailsContainer}>
-          <View style={styles.detailsRow}>
-            <Text style={styles.detailsLabel}>Genres:</Text>
-            <Text style={styles.detailsText}>{media.genres.join(', ')}</Text>
-          </View>
-          <View style={styles.detailsRow}>
-            <Text style={styles.detailsLabel}>Source:</Text>
-            <Text style={styles.detailsText}>{media.source}</Text>
-          </View>
-          <View style={styles.detailsRow}>
-            <Text style={styles.detailsLabel}>Episodes:</Text>
-            <Text style={styles.detailsText}>{media.episodes}</Text>
-          </View>
-          <View style={styles.detailsRow}>
-            <Text style={styles.detailsLabel}>Start Date:</Text>
-            <Text style={styles.detailsText}>
-              {`${media.startDate.year}-${media.startDate.month}-${media.startDate.day}`}
-            </Text>
-          </View>
-          <View style={styles.detailsRow}>
-            <Text style={styles.detailsLabel}>End Date:</Text>
-            <Text style={styles.detailsText}>
-              {`${media.endDate.year}-${media.endDate.month}-${media.endDate.day}`}
-            </Text>
-          </View>
-          <View style={styles.detailsRow}>
-            <Text style={styles.detailsLabel}>Staff:</Text>
-            <ScrollView
+    <Background>
+      <View style={styles.container}>
+        <InwardButtonElevated
+          canvasHeight={100}
+          canvasWidth={100}
+          dx={40}
+          dy={60}
+          focused={true}
+          roundedRectHeight={50}
+          roundedRectWidth={50}
+          onPress={goBackHandler}
+        >
+          <MaterialCommunityIcons
+            name="arrow-left"
+            color={COLORS.white}
+            size={30}
+            style={{
+              marginTop: 50 - 15,
+              marginLeft: 50 - 15,
+            }}
+          />
+        </InwardButtonElevated>
+        <ImageCardNeon
+          canvasHeight={500}
+          canvasWidth={WINDOW_WIDTH}
+          dx={WINDOW_WIDTH / 2}
+          dy={200}
+          focused={true}
+          roundedRectHeight={200}
+          roundedRectWidth={WINDOW_WIDTH}
+          onPress={goBackHandler}
+        >
+          <Image
+            source={{ uri: media.coverImage.extraLarge }}
+            style={[
+              styles.coverImage,
+              {
+                opacity: 0.9,
+                width: WINDOW_WIDTH,
+                height: 200,
+                marginTop: 500 / 2 - 200 / 2,
+              },
+            ]}
+          />
+        </ImageCardNeon>
+
+        <View style={styles.topContainer}>
+          <Text style={styles.title}>{data.Media.title.english}</Text>
+          <View
+            style={{
+              position: 'relative',
+              marginLeft: 0,
+              height: 60,
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+            }}
+          >
+            <FlashList
+              data={media.genres}
+              estimatedItemSize={100}
               horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.staffContainer}
-            >
-              {media.staff.edges.map(({ node }, index) => (
-                <Text key={index} style={styles.staffText}>
-                  {node.name.full}
-                </Text>
-              ))}
-            </ScrollView>
-          </View>
-          <View style={styles.detailsRow}>
-            <Text style={styles.detailsLabel}>Studios:</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.studiosContainer}
-            >
-              {media.studios.edges.map(({ node }) => (
-                <Text key={node.id} style={styles.studiosText}>
-                  {node.name}
-                </Text>
-              ))}
-            </ScrollView>
-          </View>
-        </View>
-        <Text style={styles.subtitle}>Description</Text>
-        <RenderHTML
-          contentWidth={300}
-          source={{ html: media.description }}
-          tagsStyles={htmlStyles}
-        />
-        {media.trailer && (
-          <View style={styles.trailerContainer}>
-            <Text style={styles.subtitle}>Trailer</Text>
-            <View style={styles.trailerDetails}>
-              <Text style={styles.trailerLabel}>ID:</Text>
-              <Text style={styles.trailerText}>{media.trailer.id}</Text>
-            </View>
-            <View style={styles.trailerDetails}>
-              <Text style={styles.trailerLabel}>Site:</Text>
-              <Text style={styles.trailerText}>{media.trailer.site}</Text>
-            </View>
-            <Image
-              source={{ uri: media.trailer.thumbnail }}
-              style={styles.trailerThumbnail}
+              renderItem={({ item }: { item: string }) => (
+                <StickButton
+                  text={item}
+                  canvasHeight={60}
+                  canvasWidth={item.length * 25}
+                  dx={(item.length * 25) / 2}
+                  dy={30}
+                  textColor="white"
+                  textFontFamily="semi-bold"
+                />
+              )}
+              keyExtractor={(item) => item.toString()}
             />
           </View>
-        )}
-      </ScrollView>
-    </ScrollView>
+        </View>
+        <ScrollView style={styles.content}>
+          <View style={styles.detailsContainer}>
+            {media?.description ? (
+              <View>
+                <Text style={styles.subtitle}>Description</Text>
+
+                <RenderHTML
+                  contentWidth={300}
+                  source={{ html: media.description }}
+                  tagsStyles={htmlStyles}
+                  baseStyle={styles.description}
+                />
+              </View>
+            ) : null}
+            <View style={styles.detailsRow}>
+              <Text style={styles.detailsLabel}>Source:</Text>
+              <Text style={styles.detailsText}>{media.source}</Text>
+            </View>
+            <View style={styles.detailsRow}>
+              <Text style={styles.detailsLabel}>Episodes:</Text>
+              <Text style={styles.detailsText}>{media.episodes}</Text>
+            </View>
+            <View style={styles.detailsRow}>
+              <Text style={styles.detailsLabel}>Start Date:</Text>
+              <Text style={styles.detailsText}>
+                {`${media.startDate.year}-${media.startDate.month}-${media.startDate.day}`}
+              </Text>
+            </View>
+            <View style={styles.detailsRow}>
+              <Text style={styles.detailsLabel}>End Date:</Text>
+              <Text style={styles.detailsText}>
+                {`${media.endDate.year}-${media.endDate.month}-${media.endDate.day}`}
+              </Text>
+            </View>
+            <View style={styles.detailsRow}>
+              <Text style={styles.detailsLabel}>Staff:</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.staffContainer}
+              >
+                {media.staff.edges.map(({ node }, index) => (
+                  <Text key={index} style={styles.staffText}>
+                    {node.name.full}
+                  </Text>
+                ))}
+              </ScrollView>
+            </View>
+            <View style={styles.detailsRow}>
+              <Text style={styles.detailsLabel}>Studios:</Text>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.studiosContainer}
+              >
+                {media.studios.edges.map(({ node }) => (
+                  <Text key={node.id} style={styles.studiosText}>
+                    {node.name}
+                  </Text>
+                ))}
+              </ScrollView>
+            </View>
+          </View>
+
+          {media.trailer && (
+            <View style={styles.trailerContainer}>
+              <Text style={styles.subtitle}>Trailer</Text>
+              <View style={styles.trailerDetails}>
+                <Text style={styles.trailerLabel}>ID:</Text>
+                <Text style={styles.trailerText}>{media.trailer.id}</Text>
+              </View>
+              <View style={styles.trailerDetails}>
+                <Text style={styles.trailerLabel}>Site:</Text>
+                <Text style={styles.trailerText}>{media.trailer.site}</Text>
+              </View>
+              <Image
+                source={{ uri: media.trailer.thumbnail }}
+                style={styles.trailerThumbnail}
+              />
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    </Background>
   );
 };
 
@@ -159,7 +246,7 @@ const htmlStyles = {
   p: {
     fontSize: 16,
     marginBottom: 10,
-    color: '#333',
+    color: COLORS.white,
     fontFamily: 'Arial',
   },
 };
@@ -167,8 +254,8 @@ const htmlStyles = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
     padding: 20,
+    position: 'absolute',
   },
   loadingText: {
     fontSize: 18,
@@ -191,19 +278,18 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   coverImage: {
-    width: '100%',
-    height: 200,
     resizeMode: 'cover',
     marginBottom: 10,
     borderRadius: 10,
   },
   content: {
-    marginTop: 10,
+    height: SCREEN_HEIGHT - 410,
+    overflow: 'scroll',
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontFamily: 'extra-bold',
+    color: COLORS.white,
     marginBottom: 10,
   },
   detailsContainer: {
@@ -256,9 +342,9 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'semi-bold',
     marginTop: 20,
-    color: '#333',
+    color: COLORS.white,
     marginBottom: 10,
   },
   trailerContainer: {
@@ -285,6 +371,18 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     marginTop: 10,
     borderRadius: 10,
+  },
+  description: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: COLORS.white,
+    fontFamily: 'medium',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'justify',
+  },
+  topContainer: {
+    marginTop: 300,
   },
 });
 

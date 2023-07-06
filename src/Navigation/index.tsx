@@ -46,7 +46,7 @@ const NewsStackScreen: React.FC<NewsStackScreenProps> = ({ navigation }) => {
       />
       <Stack.Screen
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
         name="DetailedNewsScreen"
         component={DetailedNewsScreen}
