@@ -48,7 +48,6 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
       isActived = true;
       offsetY.value = -SCREEEN_HEIGHT / 2;
     };
-
     const hideBottomSheet = () => {
       offsetY.value = 0;
       bottom.value = -SCREEEN_HEIGHT;
@@ -65,12 +64,13 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
           {
             translateY: withSpring(offsetY.value, {
               damping: 20,
-              velocity: 0.1,
+              velocity: 50,
             }),
           },
         ],
         bottom: withSpring(bottom.value, {
           damping: 20,
+          velocity: 50,
         }),
       };
     });
@@ -98,27 +98,28 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
         <Animated.View
           style={[styles.sheetContainer, AnimatedBottomSheetStyle]}
         >
-          <Canvas
+          <View
             style={{
-              flex: 1,
-              position: 'absolute',
-              height: SCREEEN_HEIGHT,
-              width: SCREEN_WIDTH,
-              backgroundColor: 'black',
-              top: 0,
-              opacity: 0.5,
+              ...StyleSheet.absoluteFillObject,
+              backgroundColor: 'transparent',
             }}
           >
-            <SkiaImage
-              x={0}
-              y={-SCREEEN_HEIGHT / 4}
-              width={SCREEN_WIDTH}
-              height={SCREEEN_HEIGHT}
-              image={image}
-            >
-              <Blur blur={10} />
-            </SkiaImage>
-          </Canvas>
+            <WebView
+              style={{ flex: 1, backgroundColor: 'transparent' }}
+              originWhitelist={['*']}
+              source={{
+                html: `<div style="
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.17);
+        backdrop-filter: blur(30px);
+        "/>`,
+              }}
+            />
+          </View>
           <View style={styles.wrapper}>
             <View style={styles.dragger} />
             <View style={styles.content}>{children}</View>

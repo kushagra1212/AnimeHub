@@ -10,7 +10,7 @@ export const throttleFunc = (func, interval) => {
 };
 
 export const genreOptions = [
-  { label: 'All', value: 'All' },
+  { label: 'All', value: undefined },
   { label: 'Action', value: 'Action' },
   { label: 'Comedy', value: 'Comedy' },
   { label: 'Drama', value: 'Drama' },
@@ -19,7 +19,7 @@ export const genreOptions = [
 ];
 
 export const sortOptions = [
-  { label: 'Default', value: 'undefined' },
+  { label: 'Default', value: undefined },
   { label: 'Title (A-Z)', value: 'TITLE_ENGLISH' },
   { label: 'Start Date (Oldest)', value: 'START_DATE' },
   { label: 'Start Date (Newest)', value: 'START_DATE_DESC' },
@@ -32,7 +32,7 @@ export const sortOptions = [
 ];
 
 export const statusOptions = [
-  { label: 'All', value: 'undefined' },
+  { label: 'All', value: undefined },
   { label: 'Finished', value: 'FINISHED' },
   { label: 'Releasing', value: 'RELEASING' },
   { label: 'Not Yet Released', value: 'NOT_YET_RELEASED' },
@@ -40,7 +40,7 @@ export const statusOptions = [
   { label: 'Hiatus', value: 'HIATUS' },
 ];
 export const typeOptions = [
-  { label: 'All', value: 'undefined' },
+  { label: 'All', value: undefined },
   { label: 'Anime', value: 'ANIME' },
   { label: 'Manga', value: 'MANGA' },
 ];

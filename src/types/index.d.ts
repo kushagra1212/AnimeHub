@@ -127,7 +127,7 @@ interface AnimeNewsVariables {
     | 'SEARCH_MATCH'
     | 'FAVOURITES'
     | 'FAVOURITES_DESC'
-    | 'undefined';
+    | undefined;
   type: 'ANIME' | 'MANGA' | 'undefined';
   status:
     | 'FINISHED'
@@ -135,5 +135,5 @@ interface AnimeNewsVariables {
     | 'NOT_YET_RELEASED'
     | 'CANCELLED'
     | 'HIATUS'
-    | 'undefined';
+    | undefined;
 }

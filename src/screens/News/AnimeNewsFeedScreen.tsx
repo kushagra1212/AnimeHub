@@ -49,29 +49,29 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   navigation,
 }) => {
   const sheetRef = React.useRef<BottomSheetRef>(null);
-  const [selectedGenre, setSelectedGenre] = useState('All');
+  const [selectedGenre, setSelectedGenre] = useState(undefined);
   const [selectedType, setSelectedType] =
-    useState<AnimeNewsVariables['type']>('undefined');
+    useState<AnimeNewsVariables['type']>(undefined);
   const [selectedSort, setSelectedSort] =
-    useState<AnimeNewsVariables['sort']>('undefined');
+    useState<AnimeNewsVariables['sort']>(undefined);
   const [selectedStatus, setSelectedStatus] =
-    useState<AnimeNewsVariables['status']>('undefined');
-
+    useState<AnimeNewsVariables['status']>(undefined);
+  const [showBottomSheet, setShowBottomSheet] = useState(false);
   const [response, setResponse] = useState<Response | null>(null);
   const opacity = useSharedValue(0);
-  const perPage = 10;
+  const perPage = 3;
 
   const { loading, error, data, fetchMore } = useQuery<
     AnimeNewsData,
     AnimeNewsVariables
   >(GET_ANIME_NEWS, {
     variables: {
-      genre: selectedGenre === 'All' ? undefined : selectedGenre,
+      genre: selectedGenre,
       page: 1,
       perPage,
-      sort: selectedSort === 'undefined' ? undefined : selectedSort,
-      type: selectedType === 'undefined' ? undefined : selectedType,
-      status: selectedStatus === 'undefined' ? undefined : selectedStatus,
+      sort: selectedSort,
+      type: selectedType,
+      status: selectedStatus,
     },
   });
   useFocusEffect(
@@ -95,49 +95,40 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
         media: data.Page.media,
       });
     }
-  }, [data?.Page?.pageInfo?.currentPage]);
+  }, [
+    data?.Page?.pageInfo?.currentPage,
+    selectedGenre,
+    selectedType,
+    selectedSort,
+  ]);
 
-  // if (loading) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text> Loading...</Text>
-  //     </View>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text>Error: {error.message}</Text>
-  //     </View>
-  //   );
-  // }
-
-  // newsData = Array.from(
-  //   new Map(newsData.map((item) => [item.id, item])).values()
-  // );
   const handleNewsItemPress = (item: Media) => {
+    setShowBottomSheet(false);
     navigation.navigate('DetailedNewsScreen', { mediaId: item.id });
   };
 
   const handleGenreChange = (genre: string) => {
+    setResponse(null);
     setSelectedGenre(genre);
   };
 
   const handleTypeChange = (type: AnimeNewsVariables['type']) => {
+    setResponse(null);
     setSelectedType(type);
   };
 
   const handleSortChange = (sort: AnimeNewsVariables['sort']) => {
+    setResponse(null);
     setSelectedSort(sort);
   };
 
   const handleStatusChange = (status: AnimeNewsVariables['status']) => {
+    setResponse(null);
     setSelectedStatus(status);
   };
 
   const handleLoadMore = () => {
-    if (response && response.pageInfo.hasNextPage) {
+    if (response && response.pageInfo.hasNextPage && !loading) {
       fetchMore({
         variables: {
           page: response.pageInfo.currentPage + 1,
@@ -145,9 +136,13 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
       })
         .then((newData) => {
           setResponse((prev) => {
+            let newMedia = null;
+            if (prev)
+              newMedia = ArrNoDupe([...prev.media, ...newData.data.Page.media]);
+            else newMedia = newData.data.Page.media;
             return {
               pageInfo: newData.data.Page.pageInfo,
-              media: ArrNoDupe([...prev.media, ...newData.data.Page.media]),
+              media: newMedia,
             } as Response;
           });
         })
@@ -156,17 +151,23 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
   };
   const bottomSheetToggle = () => {
     if (sheetRef.current?.isActive()) {
+      sheetRef.current?.hideBottomSheet();
       navigation.getParent().setOptions({
         tabBarStyle: { ...tabBarStyle, display: 'flex' },
       });
       opacity.value = 0;
-      sheetRef.current?.hideBottomSheet();
+      setTimeout(() => {
+        setShowBottomSheet(false);
+      }, 500);
     } else {
-      navigation.getParent().setOptions({
-        tabBarStyle: { ...tabBarStyle, display: 'none' },
-      });
-      opacity.value = 0.5;
-      sheetRef.current?.showBottomSheet();
+      setShowBottomSheet(true);
+      setTimeout(() => {
+        sheetRef.current?.showBottomSheet();
+        opacity.value = 0.5;
+        navigation.getParent().setOptions({
+          tabBarStyle: { ...tabBarStyle, display: 'none' },
+        });
+      }, 100);
     }
   };
 
@@ -202,11 +203,26 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
             },
             AnimatedBackdropStyles,
           ]}
-          onTouchStart={bottomSheetToggle}
+          onTouchStart={() => {
+            bottomSheetToggle();
+          }}
         />
-        <BottomSheet bottomSheetToggle={bottomSheetToggle} ref={sheetRef}>
-          <FilterSheet />
-        </BottomSheet>
+        {showBottomSheet ? (
+          <BottomSheet bottomSheetToggle={bottomSheetToggle} ref={sheetRef}>
+            <FilterSheet
+              {...{
+                handleGenreChange,
+                selectedGenre,
+                handleTypeChange,
+                selectedType,
+                handleSortChange,
+                selectedSort,
+                handleStatusChange,
+                selectedStatus,
+              }}
+            />
+          </BottomSheet>
+        ) : null}
         <View style={{ zIndex: 2 }}>
           <CircularButton
             canvasHeight={95}
@@ -217,55 +233,16 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           />
         </View>
 
-        {/* <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>Genre:</Text>
-        <RNPickerSelect
-          onValueChange={handleGenreChange}
-          items={genreOptions}
-          value={selectedGenre}
-          style={pickerSelectStyles}
-          placeholder={{ label: 'Select Genre', value: 'All' }}
-        />
-      </View>
-      <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>Type:</Text>
-        <RNPickerSelect
-          onValueChange={handleTypeChange}
-          items={typeOptions}
-          value={selectedType}
-          style={pickerSelectStyles}
-          placeholder={{ label: 'Select Type', value: 'undefined' }}
-      </View>
-      <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>Sort By:</Text>
-        <RNPickerSelect
-          onValueChange={handleSortChange}
-          items={sortOptions}
-          value={selectedSort}
-          style={pickerSelectStyles}
-          placeholder={{ label: 'Select Sort', value: 'undefined' }}
-        />
-      </View>
-      <View style={styles.filterContainer}>
-        <Text style={styles.filterLabel}>Status:</Text>
-        <RNPickerSelect
-          onValueChange={handleStatusChange}
-          items={statusOptions}
-          value={selectedStatus}
-          style={pickerSelectStyles}
-          placeholder={{ label: 'Select Status', value: 'undefined' }}
-        />
-      </View> */}
-        {response ? (
-          <View
-            style={{
-              marginTop: 120,
-              height: 500,
-              flex: 1,
-            }}
-          >
-            <Shadder />
-
+        <View
+          style={{
+            marginTop: 120,
+            height: 1000,
+            flex: 1,
+            paddingBottom: 20,
+          }}
+        >
+          <Shadder />
+          {response ? (
             <FlashList
               estimatedItemSize={200}
               data={response.media}
@@ -274,8 +251,8 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
               onEndReached={handleLoadMore}
               onEndReachedThreshold={2}
             />
-          </View>
-        ) : null}
+          ) : null}
+        </View>
       </View>
     </Background>
   );

@@ -24,28 +24,27 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
   const { mediaId } = route.params;
   const { loading, error, data } = useQuery(GET_NEWS_DETAILS, {
     variables: {
-      mediaId: parseInt(mediaId),
+      mediaId: mediaId,
     },
   });
 
   useEffect(() => {
-    if (navigation && data?.Media) {
-      navigation.setOptions({
-        title: data.Media.title.english,
-      });
-      navigation.getParent()?.setOptions({
-        tabBarStyle: {
-          ...tabBarStyle,
-          display: 'none',
-        },
-      });
-    }
-
-    return () => {
-      navigation.getParent()?.setOptions({
-        tabBarStyle: undefined,
-      });
-    };
+    // if (navigation && data?.Media) {
+    //   navigation.setOptions({
+    //     title: data.Media.title.english,
+    //   });
+    //   navigation.getParent()?.setOptions({
+    //     tabBarStyle: {
+    //       ...tabBarStyle,
+    //       display: 'none',
+    //     },
+    //   });
+    // }
+    // return () => {
+    //   navigation.getParent()?.setOptions({
+    //     tabBarStyle: undefined,
+    //   });
+    // };
   }, [navigation, data?.Media]);
 
   if (loading) {
@@ -64,7 +63,7 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
     );
   }
 
-  const media: Media = data.Media;
+  const media: Media = data?.Media;
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -289,4 +288,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(DetailedNewsScreen);
+export default DetailedNewsScreen;

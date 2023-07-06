@@ -17,7 +17,7 @@ const Shadder = () => {
           height: 200,
           position: 'absolute',
           width: '100%',
-          top: -140,
+          top: -160,
         }}
       >
         <Svg height="100%" width="100%">
