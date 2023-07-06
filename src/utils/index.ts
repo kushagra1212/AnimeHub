@@ -73,4 +73,11 @@ export const tabBarStyle: any = {
   right: 0,
   borderWidth: 2,
   borderBottomWidth: 0,
+  borderTopWidth: 0,
+  borderColor: '#000',
 };
+export function ArrNoDupe(a) {
+  var temp = {};
+  for (var i = 0; i < a.length; i++) temp[a[i].id] = a[i];
+  return Object.values(temp);
+}

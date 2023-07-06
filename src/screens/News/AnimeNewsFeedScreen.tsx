@@ -31,7 +31,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { tabBarStyle } from '../../utils';
+import { ArrNoDupe, tabBarStyle } from '../../utils';
 import Shadder from '../../components/ui-components/Shadder';
 const { width, height: SCREEEN_HEIGHT } = Dimensions.get('window');
 
@@ -147,8 +147,8 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           setResponse((prev) => {
             return {
               pageInfo: newData.data.Page.pageInfo,
-              media: [...prev.media, ...newData.data.Page.media],
-            };
+              media: ArrNoDupe([...prev.media, ...newData.data.Page.media]),
+            } as Response;
           });
         })
         .catch((err) => console.log(err, 'Handle Load More Error'));
@@ -260,7 +260,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           <View
             style={{
               marginTop: 120,
-              height: 1000,
+              height: 500,
               flex: 1,
             }}
           >

@@ -7,6 +7,7 @@ import { NewsStackParamList } from '../../Navigation';
 import { Media } from '../../types';
 import { memo } from 'react';
 import { GET_NEWS_DETAILS } from '../../graphql/queries/news-queries';
+import { tabBarStyle } from '../../utils';
 type DetailedNewsScreenProps = {
   route: {
     params: {
@@ -34,6 +35,7 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
       });
       navigation.getParent()?.setOptions({
         tabBarStyle: {
+          ...tabBarStyle,
           display: 'none',
         },
       });

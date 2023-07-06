@@ -28,9 +28,9 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <StatusBar style="auto" />
+      <StatusBar style="dark" />
 
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <ApolloProvider client={client}>
           <NavigationContainer>
             <TabNavigator />

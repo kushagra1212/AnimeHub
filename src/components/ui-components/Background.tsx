@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import Svg, { Defs, Rect, LinearGradient, Stop } from 'react-native-svg';
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 const FROM_COLOR = '#424750';
 const TO_COLOR = '#000000';
 
 const Background = ({ children }) => {
   return (
-    <View style={[{ flex: 1 }, StyleSheet.absoluteFillObject]}>
+    <View style={[{ flex: 1, zIndex: 5 }, StyleSheet.absoluteFillObject]}>
       <Svg height="100%" width="100%" style={StyleSheet.absoluteFillObject}>
         <Defs>
           <LinearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">

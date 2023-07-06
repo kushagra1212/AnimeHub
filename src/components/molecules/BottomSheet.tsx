@@ -11,6 +11,20 @@ import { COLORS } from '../../theme';
 import { forwardRef, useEffect } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { memo } from 'react';
+import {
+  Blur,
+  BlurMask,
+  Box,
+  Canvas,
+  RoundedRect,
+  Shadow,
+  rect,
+  rrect,
+  Circle,
+  Image as SkiaImage,
+  useImage,
+} from '@shopify/react-native-skia';
+import WebView from 'react-native-webview';
 const { width: SCREEN_WIDTH, height: SCREEEN_HEIGHT } =
   Dimensions.get('window');
 
@@ -75,12 +89,36 @@ const BottomSheet = forwardRef<BottomSheetRef, BottomSheetProps>(
         }
       })
       .onFinalize(() => {});
-
+    const image = useImage(require('../../../assets/transparent.png'));
+    if (!image) {
+      return null;
+    }
     return (
       <GestureDetector gesture={gesture}>
         <Animated.View
           style={[styles.sheetContainer, AnimatedBottomSheetStyle]}
         >
+          <Canvas
+            style={{
+              flex: 1,
+              position: 'absolute',
+              height: SCREEEN_HEIGHT,
+              width: SCREEN_WIDTH,
+              backgroundColor: 'black',
+              top: 0,
+              opacity: 0.5,
+            }}
+          >
+            <SkiaImage
+              x={0}
+              y={-SCREEEN_HEIGHT / 4}
+              width={SCREEN_WIDTH}
+              height={SCREEEN_HEIGHT}
+              image={image}
+            >
+              <Blur blur={10} />
+            </SkiaImage>
+          </Canvas>
           <View style={styles.wrapper}>
             <View style={styles.dragger} />
             <View style={styles.content}>{children}</View>
@@ -94,10 +132,14 @@ const styles = StyleSheet.create({
   sheetContainer: {
     flex: 1,
     position: 'absolute',
-    backgroundColor: COLORS.white,
+    backgroundColor: 'transparent',
     width: SCREEN_WIDTH,
     height: SCREEEN_HEIGHT,
     zIndex: 5,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
   },
   wrapper: {
     borderTopLeftRadius: 10,
@@ -105,13 +147,12 @@ const styles = StyleSheet.create({
 
     // justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.yellowPrimary,
   },
   dragger: {
-    width: 40,
+    width: 50,
     height: 5,
     borderRadius: 5,
-    backgroundColor: '#ccc',
+    backgroundColor: 'white',
     margin: 10,
   },
   content: {
@@ -119,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(BottomSheet);
+export default BottomSheet;
