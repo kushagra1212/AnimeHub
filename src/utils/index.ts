@@ -84,3 +84,7 @@ export function ArrNoDupe(a) {
   for (var i = 0; i < a.length; i++) temp[a[i].id] = a[i];
   return Object.values(temp);
 }
+
+export const getNewsSource = (source: any) => {
+  return source === 'ORIGINAL' ? 'Verified' : 'Manga';
+};

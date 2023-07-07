@@ -17,6 +17,8 @@ import Background from '../../components/ui-components/Background';
 import { ImageCardNeon } from '../../components/ui-components/ImageCard';
 import { FlashList } from '@shopify/flash-list';
 import StickButton from '../../components/ui-components/StickButton';
+import NewsCardContent from '../../components/organs/NewsCardContent';
+import Trailer from '../../components/molecules/Trailer';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 type DetailedNewsScreenProps = {
   route: {
@@ -169,26 +171,12 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
                 />
               </View>
             ) : null}
-            <View style={styles.detailsRow}>
-              <Text style={styles.detailsLabel}>Source:</Text>
-              <Text style={styles.detailsText}>{media.source}</Text>
-            </View>
-            <View style={styles.detailsRow}>
-              <Text style={styles.detailsLabel}>Episodes:</Text>
-              <Text style={styles.detailsText}>{media.episodes}</Text>
-            </View>
-            <View style={styles.detailsRow}>
-              <Text style={styles.detailsLabel}>Start Date:</Text>
-              <Text style={styles.detailsText}>
-                {`${media.startDate.year}-${media.startDate.month}-${media.startDate.day}`}
-              </Text>
-            </View>
-            <View style={styles.detailsRow}>
-              <Text style={styles.detailsLabel}>End Date:</Text>
-              <Text style={styles.detailsText}>
-                {`${media.endDate.year}-${media.endDate.month}-${media.endDate.day}`}
-              </Text>
-            </View>
+            <NewsCardContent
+              endDate={media?.endDate}
+              startDate={media?.startDate}
+              episodes={media?.episodes}
+              source={media?.source}
+            />
             <View style={styles.detailsRow}>
               <Text style={styles.detailsLabel}>Staff:</Text>
               <ScrollView
@@ -211,31 +199,14 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
                 contentContainerStyle={styles.studiosContainer}
               >
                 {media.studios.edges.map(({ node }) => (
-                  <Text key={node.id} style={styles.studiosText}>
+                  <Text key={node.id} style={styles.staffText}>
                     {node.name}
                   </Text>
                 ))}
               </ScrollView>
             </View>
           </View>
-
-          {media.trailer && (
-            <View style={styles.trailerContainer}>
-              <Text style={styles.subtitle}>Trailer</Text>
-              <View style={styles.trailerDetails}>
-                <Text style={styles.trailerLabel}>ID:</Text>
-                <Text style={styles.trailerText}>{media.trailer.id}</Text>
-              </View>
-              <View style={styles.trailerDetails}>
-                <Text style={styles.trailerLabel}>Site:</Text>
-                <Text style={styles.trailerText}>{media.trailer.site}</Text>
-              </View>
-              <Image
-                source={{ uri: media.trailer.thumbnail }}
-                style={styles.trailerThumbnail}
-              />
-            </View>
-          )}
+          <Trailer trailer={media.trailer} />
         </ScrollView>
       </View>
     </Background>
@@ -283,7 +254,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   content: {
-    height: SCREEN_HEIGHT - 410,
+    height: SCREEN_HEIGHT - 450,
     overflow: 'scroll',
   },
   title: {
@@ -298,7 +269,7 @@ const styles = StyleSheet.create({
   detailsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    marginTop: 20,
   },
   detailsLabel: {
     fontSize: 18,
@@ -315,15 +286,17 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'center',
     marginBottom: 5,
+    elevation: 10,
   },
   staffText: {
     fontSize: 16,
-    color: '#888',
+    color: COLORS.white,
     marginRight: 5,
     paddingVertical: 3,
     paddingHorizontal: 8,
-    borderRadius: 5,
-    backgroundColor: '#F0F0F0',
+    borderRadius: 10,
+    backgroundColor: COLORS.blackSecondary,
+    fontFamily: 'thin',
   },
   studiosContainer: {
     flexDirection: 'row',
@@ -331,46 +304,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 5,
   },
-  studiosText: {
-    fontSize: 16,
-    color: '#888',
-    marginRight: 5,
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: 5,
-    backgroundColor: '#F0F0F0',
-  },
   subtitle: {
     fontSize: 20,
     fontFamily: 'semi-bold',
     marginTop: 20,
     color: COLORS.white,
     marginBottom: 10,
-  },
-  trailerContainer: {
-    marginTop: 20,
-  },
-  trailerDetails: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  trailerLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#888',
-    marginRight: 5,
-  },
-  trailerText: {
-    fontSize: 18,
-    color: '#888',
-  },
-  trailerThumbnail: {
-    width: '100%',
-    height: 200,
-    resizeMode: 'cover',
-    marginTop: 10,
-    borderRadius: 10,
   },
   description: {
     fontSize: 16,

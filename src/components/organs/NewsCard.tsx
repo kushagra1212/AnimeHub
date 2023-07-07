@@ -6,10 +6,12 @@ import SeatedButton from '../ui-components/SeatedButton';
 import { Ionicons, FontAwesome } from '@expo/vector-icons';
 import { COLORS, SIZES } from '../../theme';
 const { width, height } = Dimensions.get('window');
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import StickButton from '../ui-components/StickButton';
 import { FlashList } from '@shopify/flash-list';
 import WebDisplay from './WebDisplay';
+import NewsCardContent from './NewsCardContent';
+import { getNewsSource } from '../../utils';
 const baseStyleHtmlDesc = {
   fontSize: 15,
   color: COLORS.GraySecondary,
@@ -27,7 +29,6 @@ const NewsCard = ({ item, handleNewsItemPress }) => {
   const canvasHeight = 450;
   const roundedRectWidth = canvasWidth - 30;
   const roundedRectHeight = canvasHeight - 30;
-  const source = item.source === 'ORIGINAL' ? 'Verified' : 'Manga';
   return (
     <View
       style={{
@@ -121,48 +122,12 @@ const NewsCard = ({ item, handleNewsItemPress }) => {
             keyExtractor={(item) => item.toString()}
           />
         </View>
-        {item.episodes ? (
-          <Text
-            style={{
-              color: COLORS.white,
-              opacity: 0.5,
-              fontFamily: 'medium',
-              fontSize: SIZES.body3,
-              textAlign: 'right',
-              marginRight: 10,
-            }}
-          >
-            Episodes: {item.episodes}{' '}
-            <FontAwesome name="th-list" size={20} color="white" />
-          </Text>
-        ) : null}
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-          }}
-        >
-          {source ? (
-            <View>
-              <Text style={styles.cardValue}>{source}</Text>
-              <Text style={styles.cardKey}>Source</Text>
-            </View>
-          ) : null}
-
-          {item.startDate?.year ? (
-            <View>
-              <Text style={styles.cardValue}>{item.startDate.year}</Text>
-              <Text style={styles.cardKey}>Start Date</Text>
-            </View>
-          ) : null}
-          {item.endDate?.year ? (
-            <View>
-              <Text style={styles.cardValue}>{item.endDate.year}</Text>
-              <Text style={styles.cardKey}>End Date</Text>
-            </View>
-          ) : null}
-        </View>
+        <NewsCardContent
+          endDate={item?.endDate}
+          startDate={item?.startDate}
+          episodes={item?.episodes}
+          source={item?.source}
+        />
       </View>
     </View>
   );
@@ -180,17 +145,6 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     margin: 10,
     fontFamily: 'extra-bold',
-  },
-  cardValue: {
-    color: COLORS.white,
-    fontFamily: 'semi-bold',
-    fontSize: SIZES.h4,
-  },
-  cardKey: {
-    color: COLORS.GrayPrimary,
-    fontFamily: 'extra-bold',
-    fontSize: SIZES.body3,
-    opacity: 0.5,
   },
 });
 export default memo(NewsCard);

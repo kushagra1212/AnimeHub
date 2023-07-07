@@ -16,13 +16,9 @@ export const GET_NEWS_DETAILS = gql`
       episodes
       startDate {
         year
-        month
-        day
       }
       endDate {
         year
-        month
-        day
       }
       trailer {
         id
