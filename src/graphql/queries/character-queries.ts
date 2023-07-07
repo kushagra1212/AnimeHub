@@ -31,7 +31,7 @@ export const GET_CHARACTER_USING_SEARCH = gql`
 export const GET_CHARACTER_DETAILS = gql`
   query Query($characterId: Int) {
     Character(id: $characterId) {
-      description
+      description(asHtml: true)
       favourites
       gender
       id

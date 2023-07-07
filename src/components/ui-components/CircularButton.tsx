@@ -215,12 +215,15 @@ export const InwardButtonElevated = ({
             r={30}
             x={canvasWidth / 2 - roundedRectWidth / 2}
             y={canvasHeight / 2 - roundedRectHeight / 2}
-            color="#2F353A"
+            color="#000000"
           >
-            <Shadow dx={-5} dy={-5} blur={13} color="#777777" />
+            {/* <Shadow dx={-5} dy={-5} blur={13} color="#444444" />
             <Shadow dx={5} dy={5} blur={13} color="#000000" />
 
-            <Shadow dx={-2} dy={-2} blur={13} color="#111222" inner />
+            <Shadow dx={-2} dy={-2} blur={13} color="#000000" inner /> */}
+            <Shadow dx={0} dy={0} blur={10} color="#444444" inner />
+
+            <Shadow dx={0} dy={0} blur={10} color="#111111" />
           </RoundedRect>
         </Canvas>
       ) : null}

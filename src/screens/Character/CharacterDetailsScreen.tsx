@@ -16,7 +16,7 @@ import { InwardButtonElevated } from '../../components/ui-components/CircularBut
 import { COLORS } from '../../theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Background from '../../components/ui-components/Background';
-import { WINDOW_WIDTH } from '../../utils';
+import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
 import { ImageCardNeon } from '../../components/ui-components/ImageCard';
 import RenderHTML from 'react-native-render-html';
 import { htmlStyles } from '../News/DetailedNewsScreen';
@@ -44,19 +44,14 @@ const CharacterDetailsScreen = ({
     if (data && data.Character) {
       setCharacterData(data.Character);
       if (navigation && data?.Character) {
-        navigation.setOptions({
-          title: data?.Character?.name.full,
-        });
         navigation.getParent()?.setOptions({
-          tabBarStyle: {
-            display: 'none',
-          },
+          tabBarStyle: { ...tabBarStyle, display: 'none' },
         });
       }
     }
     return () => {
       navigation.getParent()?.setOptions({
-        tabBarStyle: undefined,
+        tabBarStyle: tabBarStyle,
       });
     };
   }, [data]);
@@ -130,7 +125,7 @@ const CharacterDetailsScreen = ({
         <View style={styles.topContainer}>
           <Text style={styles.title}>{name.full}</Text>
 
-          <View style={styles.detailsContainer}>
+          <ScrollView style={styles.detailsContainer}>
             {age && (
               <View style={styles.fieldContainer}>
                 <Text style={styles.fieldTitle}>Age</Text>
@@ -143,19 +138,14 @@ const CharacterDetailsScreen = ({
                 <Text style={styles.fieldValue}>{bloodType || 'Unknown'}</Text>
               </View>
             )}
-            {description && (
-              <View style={styles.fieldContainer}>
-                <Text style={styles.fieldTitle}>Description</Text>
-                <Text style={styles.fieldValue}>{description}</Text>
-              </View>
-            )}
+
             {description ? (
               <View>
                 <Text style={styles.subtitle}>Description</Text>
 
                 <RenderHTML
                   contentWidth={300}
-                  source={{ html: media.description }}
+                  source={{ html: description }}
                   tagsStyles={htmlStyles}
                   baseStyle={styles.description}
                 />
@@ -174,7 +164,7 @@ const CharacterDetailsScreen = ({
               </View>
             )}
             <View style={styles.fieldContainer}>
-              <Text style={styles.fieldTitle}>Media</Text>
+              <Text style={styles.fieldTitle}>Gallery</Text>
               <ScrollView horizontal>
                 <View style={styles.mediaContainer}>
                   {media.nodes.map((item, index) => (
@@ -187,7 +177,7 @@ const CharacterDetailsScreen = ({
                 </View>
               </ScrollView>
             </View>
-          </View>
+          </ScrollView>
         </View>
       </View>
     </Background>
@@ -204,7 +194,6 @@ const styles = StyleSheet.create({
   },
   coverImage: {
     width: '100%',
-    aspectRatio: 16 / 9,
     borderRadius: 8,
     marginBottom: 16,
   },
@@ -218,18 +207,19 @@ const styles = StyleSheet.create({
     fontFamily: 'extra-bold',
   },
   fieldContainer: {
-    marginBottom: 16,
+    marginBottom: 10,
   },
   fieldTitle: {
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 20,
     color: COLORS.white,
     marginBottom: 4,
+    fontFamily: 'extra-bold',
   },
   fieldValue: {
     color: COLORS.white,
     fontSize: 14,
     opacity: 0.8,
+    fontFamily: 'regular',
   },
   mediaContainer: {
     flexDirection: 'row',
@@ -238,10 +228,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mediaImage: {
-    width: 100,
-    height: 150,
+    width: 200,
+    height: 250,
     borderRadius: 8,
-    marginBottom: 8,
+    marginBottom: 10,
+    marginRight: 10,
   },
   nightModeButton: {
     position: 'absolute',
@@ -266,7 +257,6 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    marginBottom: 10,
     color: COLORS.white,
     fontFamily: 'medium',
     justifyContent: 'center',
@@ -275,6 +265,8 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     marginBottom: 20,
+    overflow: 'scroll',
+    height: WINDOW_HEIGHT - 320,
   },
 });
 export default memo(CharacterDetailsScreen);

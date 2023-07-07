@@ -59,7 +59,7 @@ export const GET_ANIME_DETAILS = gql`
       coverImage {
         extraLarge
       }
-      description
+      description(asHtml: true)
       duration
       endDate {
         day

@@ -10,7 +10,7 @@ export const GET_NEWS_DETAILS = gql`
       coverImage {
         extraLarge
       }
-      description
+      description(asHtml: true)
       genres
       source
       episodes
@@ -68,7 +68,7 @@ export const GET_ANIME_NEWS = gql`
         coverImage {
           extraLarge
         }
-        description
+        description(asHtml: true)
         genres
         source
         episodes

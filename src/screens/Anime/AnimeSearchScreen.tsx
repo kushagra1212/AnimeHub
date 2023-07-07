@@ -9,7 +9,11 @@ import {
   useState,
 } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons';
 import { COLORS } from '../../theme';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
 
@@ -18,6 +22,10 @@ import Search from '../../components/molecules/Search';
 import { FlashList } from '@shopify/flash-list';
 import { GET_ANIMES_USING_SEARCH } from '../../graphql/queries/anime-queries';
 import { set } from 'react-native-reanimated';
+import { SearchInput } from '../../components/ui-components/SearchInput';
+import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
+import { InwardButtonElevated } from '../../components/ui-components/CircularButton';
+import Background from '../../components/ui-components/Background';
 
 const AnimeSearchScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
@@ -68,15 +76,13 @@ const AnimeSearchScreen = ({ navigation }) => {
   useEffect(() => {
     if (navigation) {
       navigation.getParent()?.setOptions({
-        tabBarStyle: {
-          display: 'none',
-        },
+        tabBarStyle: { ...tabBarStyle, display: 'none' },
       });
     }
 
     return () => {
       navigation.getParent()?.setOptions({
-        tabBarStyle: undefined,
+        tabBarStyle: tabBarStyle,
       });
     };
   }, [navigation]);
@@ -121,56 +127,122 @@ const AnimeSearchScreen = ({ navigation }) => {
   const Card = ({ item }) => {
     return <AnimeCard item={item} navigation={navigation} />;
   };
+  const roundedRectWidth = WINDOW_WIDTH - 50,
+    roundedRectHeight = 60,
+    canvasWidth = WINDOW_WIDTH,
+    canvasHeight = 120;
   return (
-    <View style={styles.container}>
-      <Search
-        ref={searchInputRef}
-        {...{
-          goBackHandler,
-          searchText,
-          handleSearch,
-          handleSearchSubmit,
-          showBackButton: true,
-          placeholder: 'Search Anime',
-        }}
-      />
-      {!animeResponse && searchText && searchText !== '' && !loading ? (
-        <Text style={styles.message}>No results found</Text>
-      ) : null}
-      {!animeResponse && searchText === '' && !loading ? (
-        <Text style={styles.message}>Search Anime Here</Text>
-      ) : null}
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.greenPrimary} />
-        </View>
-      ) : null}
-
-      {animeResponse && queryText && queryText !== '' ? (
-        <View style={{ flex: 1, height: 1000 }}>
-          <FlashList
-            estimatedItemSize={2000}
-            data={animeResponse.animes}
-            renderItem={Card}
-            keyExtractor={(item) => item.id.toString()}
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={2}
+    <Background>
+      <View style={styles.container}>
+        <InwardButtonElevated
+          canvasHeight={100}
+          canvasWidth={100}
+          dx={30}
+          dy={80}
+          focused={true}
+          roundedRectHeight={50}
+          roundedRectWidth={50}
+          onPress={goBackHandler}
+        >
+          <MaterialCommunityIcons
+            name="arrow-left"
+            color={COLORS.white}
+            size={30}
+            style={{
+              marginTop: 50 - 15,
+              marginLeft: 50 - 15,
+            }}
           />
-        </View>
-      ) : null}
-    </View>
+        </InwardButtonElevated>
+        <SearchInput
+          canvasHeight={canvasHeight}
+          canvasWidth={canvasWidth}
+          dx={WINDOW_WIDTH / 2 + 30}
+          dy={80}
+          focused={true}
+          roundedRectHeight={roundedRectHeight}
+          roundedRectWidth={roundedRectWidth}
+        >
+          <View
+            style={{
+              backgroundColor: 'red',
+              marginTop: 30,
+              display: 'flex',
+              flexDirection: 'row',
+              width: WINDOW_WIDTH,
+              justifyContent: 'space-around',
+              alignItems: 'center',
+            }}
+          >
+            <Search
+              ref={searchInputRef}
+              {...{
+                goBackHandler,
+                searchText,
+                handleSearch,
+                handleSearchSubmit,
+                showBackButton: false,
+                placeholder: 'Search for anime',
+                containerStyles: {
+                  position: 'absolute',
+                  width: (8 * roundedRectWidth) / 10,
+                  height: (8 * roundedRectHeight) / 10,
+                  top: 5,
+                  left: 25,
+                },
+              }}
+            />
+            <Ionicons
+              name="search"
+              size={30}
+              color={COLORS.GraySecondary}
+              style={{
+                position: 'absolute',
+                top: 15,
+                right: 40,
+                opacity: 0.8,
+              }}
+            />
+          </View>
+        </SearchInput>
+
+        {!animeResponse && searchText && searchText !== '' && !loading ? (
+          <Text style={styles.message}>No results found</Text>
+        ) : null}
+        {!animeResponse && searchText === '' && !loading ? (
+          <Text style={styles.message}>Search Anime Here</Text>
+        ) : null}
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={COLORS.greenPrimary} />
+          </View>
+        ) : null}
+
+        {animeResponse && queryText && queryText !== '' ? (
+          <View style={{ flex: 1, height: 1000 }}>
+            <FlashList
+              estimatedItemSize={2000}
+              data={animeResponse.animes}
+              renderItem={Card}
+              keyExtractor={(item) => item.id.toString()}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={2}
+            />
+          </View>
+        ) : null}
+      </View>
+    </Background>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   message: {
     fontSize: 48,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: WINDOW_HEIGHT / 2 - 100,
     color: COLORS.greenPrimary,
     backgroundColor: 'red',
   },

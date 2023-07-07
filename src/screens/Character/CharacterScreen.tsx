@@ -21,7 +21,12 @@ import {
 import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
 import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { WINDOW_WIDTH, throttleFunc, typeOptionsCharacter } from '../../utils';
+import {
+  WINDOW_HEIGHT,
+  WINDOW_WIDTH,
+  throttleFunc,
+  typeOptionsCharacter,
+} from '../../utils';
 import AnimeSearch from '../../components/molecules/Search';
 import AnimeCard from '../../components/molecules/AnimeCard';
 import { useFocusEffect } from '@react-navigation/native';
@@ -104,7 +109,7 @@ const CharacterScreen = ({ navigation }) => {
   };
 
   const handleSearchSubmit = () => {
-    handleSearch(searchText);
+    // handleSearch(searchText);
   };
   const handleLoadMore = () => {
     if (
@@ -206,8 +211,18 @@ const CharacterScreen = ({ navigation }) => {
         characterResponse &&
         characterResponse.characters.length === 0 &&
         searchText !== '' ? (
-          <View>
-            <Text>No results found</Text>
+          <View style={styles.loadingContainer}>
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: 'extra-bold',
+                fontSize: 25,
+                top: WINDOW_HEIGHT / 2 - 100,
+                position: 'absolute',
+              }}
+            >
+              No results found
+            </Text>
           </View>
         ) : null}
         {/* <RNPickerSelect
@@ -227,6 +242,7 @@ const CharacterScreen = ({ navigation }) => {
               flex: 1,
               height: 800,
               marginTop: 100,
+              marginBottom: 50,
             }}
           >
             <Shadder />

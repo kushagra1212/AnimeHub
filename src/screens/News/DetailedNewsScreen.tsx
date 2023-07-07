@@ -165,7 +165,7 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
                 <Text style={styles.subtitle}>Description</Text>
 
                 <RenderHTML
-                  contentWidth={300}
+                  contentWidth={300 - 40}
                   source={{ html: media.description }}
                   tagsStyles={htmlStyles}
                   baseStyle={styles.description}
@@ -256,8 +256,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   content: {
-    height: SCREEN_HEIGHT - 450,
+    height: SCREEN_HEIGHT - 400,
     overflow: 'scroll',
+    width: WINDOW_WIDTH - 30,
   },
   title: {
     fontSize: 24,
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 16,
-    marginBottom: 10,
+    marginBottom: 1,
     color: COLORS.white,
     fontFamily: 'medium',
     justifyContent: 'center',
