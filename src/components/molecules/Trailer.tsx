@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../../theme';
+import VideoPlayer from './VieoPlayer';
 
 const Trailer = ({ trailer }: { trailer: any }) => {
   if (!trailer) return null;
@@ -8,17 +9,12 @@ const Trailer = ({ trailer }: { trailer: any }) => {
     <View style={styles.trailerContainer}>
       <Text style={styles.subtitle}>Trailer</Text>
       <View style={styles.trailerDetails}>
-        <Text style={styles.trailerLabel}>ID:</Text>
-        <Text style={styles.trailerText}>{trailer.id}</Text>
+        <VideoPlayer id={trailer.id} />
       </View>
-      <View style={styles.trailerDetails}>
-        <Text style={styles.trailerLabel}>Site:</Text>
-        <Text style={styles.trailerText}>{trailer.site}</Text>
-      </View>
-      <Image
+      {/* <Image
         source={{ uri: trailer.thumbnail }}
         style={styles.trailerThumbnail}
-      />
+      /> */}
     </View>
   );
 };

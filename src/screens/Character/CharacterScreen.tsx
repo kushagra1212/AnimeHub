@@ -28,7 +28,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import Search from '../../components/molecules/Search';
 import CharacterCard from '../../components/molecules/CharacterCard';
 
-import RNPickerSelect from 'react-native-picker-select';
 import { pickerSelectStyles } from '../News/AnimeNewsFeedScreen';
 import { FlashList } from '@shopify/flash-list';
 import { GET_CHARACTER_USING_SEARCH } from '../../graphql/queries/character-queries';
@@ -158,7 +157,7 @@ const CharacterScreen = ({ navigation }) => {
           <Text>No results found</Text>
         </View>
       ) : null}
-      <RNPickerSelect
+      {/* <RNPickerSelect
         onValueChange={handleTypeChange}
         items={typeOptionsCharacter}
         value={sort}
@@ -167,7 +166,7 @@ const CharacterScreen = ({ navigation }) => {
           label: 'Select a type...',
           value: 'undefined',
         }}
-      />
+      /> */}
 
       {characterResponse ? (
         <View
