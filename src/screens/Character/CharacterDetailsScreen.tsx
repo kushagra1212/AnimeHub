@@ -12,6 +12,14 @@ import { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { memo } from 'react';
 import { GET_CHARACTER_DETAILS } from '../../graphql/queries/character-queries';
+import { InwardButtonElevated } from '../../components/ui-components/CircularButton';
+import { COLORS } from '../../theme';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Background from '../../components/ui-components/Background';
+import { WINDOW_WIDTH } from '../../utils';
+import { ImageCardNeon } from '../../components/ui-components/ImageCard';
+import RenderHTML from 'react-native-render-html';
+import { htmlStyles } from '../News/DetailedNewsScreen';
 type CharacterDetailsScreenProps = {
   route: {
     params: {
@@ -52,14 +60,9 @@ const CharacterDetailsScreen = ({
       });
     };
   }, [data]);
-
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
-
-  if (error) {
-    return <Text>Error: {error.message}</Text>;
-  }
+  const goBackHandler = () => {
+    navigation.goBack();
+  };
 
   if (!characterData) {
     return null;
@@ -78,61 +81,126 @@ const CharacterDetailsScreen = ({
   } = characterData;
 
   return (
-    <ScrollView style={styles.container}>
-      <Image style={styles.coverImage} source={{ uri: image.large }} />
-      <Text style={styles.title}>{name.full}</Text>
-      {age && (
-        <View style={styles.fieldContainer}>
-          <Text style={styles.fieldTitle}>Age</Text>
-          <Text style={styles.fieldValue}>{age}</Text>
-        </View>
-      )}
-      {bloodType && (
-        <View style={styles.fieldContainer}>
-          <Text style={styles.fieldTitle}>Blood Type</Text>
-          <Text style={styles.fieldValue}>{bloodType || 'Unknown'}</Text>
-        </View>
-      )}
-      {description && (
-        <View style={styles.fieldContainer}>
-          <Text style={styles.fieldTitle}>Description</Text>
-          <Text style={styles.fieldValue}>{description}</Text>
-        </View>
-      )}
-      {favourites && (
-        <View style={styles.fieldContainer}>
-          <Text style={styles.fieldTitle}>Favourites</Text>
-          <Text style={styles.fieldValue}>{favourites}</Text>
-        </View>
-      )}
-      {gender && (
-        <View style={styles.fieldContainer}>
-          <Text style={styles.fieldTitle}>Gender</Text>
-          <Text style={styles.fieldValue}>{gender}</Text>
-        </View>
-      )}
-      <View style={styles.fieldContainer}>
-        <Text style={styles.fieldTitle}>Media</Text>
-        <ScrollView horizontal>
-          <View style={styles.mediaContainer}>
-            {media.nodes.map((item, index) => (
-              <Image
-                key={index.toString()}
-                style={styles.mediaImage}
-                source={{ uri: item.coverImage.extraLarge }}
-              />
-            ))}
+    <Background>
+      <View style={styles.container}>
+        <InwardButtonElevated
+          canvasHeight={100}
+          canvasWidth={100}
+          dx={40}
+          dy={60}
+          focused={true}
+          roundedRectHeight={50}
+          roundedRectWidth={50}
+          onPress={goBackHandler}
+        >
+          <MaterialCommunityIcons
+            name="arrow-left"
+            color={COLORS.white}
+            size={30}
+            style={{
+              marginTop: 50 - 15,
+              marginLeft: 50 - 15,
+            }}
+          />
+        </InwardButtonElevated>
+        <ImageCardNeon
+          canvasHeight={500}
+          canvasWidth={WINDOW_WIDTH}
+          dx={WINDOW_WIDTH / 2}
+          dy={200}
+          focused={true}
+          roundedRectHeight={200}
+          roundedRectWidth={WINDOW_WIDTH}
+          onPress={goBackHandler}
+        >
+          <Image
+            source={{ uri: image.large }}
+            style={[
+              styles.coverImage,
+              {
+                opacity: 0.9,
+                width: WINDOW_WIDTH,
+                height: 200,
+                marginTop: 500 / 2 - 200 / 2,
+              },
+            ]}
+          />
+        </ImageCardNeon>
+
+        <View style={styles.topContainer}>
+          <Text style={styles.title}>{name.full}</Text>
+
+          <View style={styles.detailsContainer}>
+            {age && (
+              <View style={styles.fieldContainer}>
+                <Text style={styles.fieldTitle}>Age</Text>
+                <Text style={styles.fieldValue}>{age}</Text>
+              </View>
+            )}
+            {bloodType && (
+              <View style={styles.fieldContainer}>
+                <Text style={styles.fieldTitle}>Blood Type</Text>
+                <Text style={styles.fieldValue}>{bloodType || 'Unknown'}</Text>
+              </View>
+            )}
+            {description && (
+              <View style={styles.fieldContainer}>
+                <Text style={styles.fieldTitle}>Description</Text>
+                <Text style={styles.fieldValue}>{description}</Text>
+              </View>
+            )}
+            {description ? (
+              <View>
+                <Text style={styles.subtitle}>Description</Text>
+
+                <RenderHTML
+                  contentWidth={300}
+                  source={{ html: media.description }}
+                  tagsStyles={htmlStyles}
+                  baseStyle={styles.description}
+                />
+              </View>
+            ) : null}
+            {favourites && (
+              <View style={styles.fieldContainer}>
+                <Text style={styles.fieldTitle}>Favourites</Text>
+                <Text style={styles.fieldValue}>{favourites}</Text>
+              </View>
+            )}
+            {gender && (
+              <View style={styles.fieldContainer}>
+                <Text style={styles.fieldTitle}>Gender</Text>
+                <Text style={styles.fieldValue}>{gender}</Text>
+              </View>
+            )}
+            <View style={styles.fieldContainer}>
+              <Text style={styles.fieldTitle}>Media</Text>
+              <ScrollView horizontal>
+                <View style={styles.mediaContainer}>
+                  {media.nodes.map((item, index) => (
+                    <Image
+                      key={index.toString()}
+                      style={styles.mediaImage}
+                      source={{ uri: item.coverImage.extraLarge }}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
           </View>
-        </ScrollView>
+        </View>
       </View>
-    </ScrollView>
+    </Background>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
-    padding: 16,
+    padding: 20,
+    position: 'absolute',
+  },
+  topContainer: {
+    marginTop: 300,
   },
   coverImage: {
     width: '100%',
@@ -142,11 +210,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: '800',
     marginTop: 16,
     marginBottom: 8,
-    color: '#000',
+    color: COLORS.white,
     textAlign: 'center',
+    fontFamily: 'extra-bold',
   },
   fieldContainer: {
     marginBottom: 16,
@@ -154,12 +223,13 @@ const styles = StyleSheet.create({
   fieldTitle: {
     fontWeight: 'bold',
     fontSize: 16,
-    color: '#000',
+    color: COLORS.white,
     marginBottom: 4,
   },
   fieldValue: {
-    color: '#666',
+    color: COLORS.white,
     fontSize: 14,
+    opacity: 0.8,
   },
   mediaContainer: {
     flexDirection: 'row',
@@ -186,6 +256,25 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     textTransform: 'uppercase',
+  },
+  subtitle: {
+    fontSize: 20,
+    fontFamily: 'semi-bold',
+    marginTop: 20,
+    color: COLORS.white,
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: COLORS.white,
+    fontFamily: 'medium',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'justify',
+  },
+  detailsContainer: {
+    marginBottom: 20,
   },
 });
 export default memo(CharacterDetailsScreen);

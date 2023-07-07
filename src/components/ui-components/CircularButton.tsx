@@ -148,9 +148,6 @@ export const InwardButton = ({
               color="rgba(51, 208, 237, 0.8)"
             />
             <Shadow dx={10} dy={10} blur={13} color="rgba(51, 208, 237, 0.8)" />
-            {/* <Shadow dx={-4} dy={-4} blur={10} color="#555555" />
-          <Shadow dx={5} dy={5} blur={5} color="#222222" />
-          <Shadow dx={3} dy={3} blur={2} color="#1C1F22" inner /> */}
           </RoundedRect>
         </Canvas>
       ) : null}
@@ -224,9 +221,6 @@ export const InwardButtonElevated = ({
             <Shadow dx={5} dy={5} blur={13} color="#000000" />
 
             <Shadow dx={-2} dy={-2} blur={13} color="#111222" inner />
-            {/* <Shadow dx={-4} dy={-4} blur={10} color="#555555" />
-          <Shadow dx={5} dy={5} blur={5} color="#222222" />
-          <Shadow dx={3} dy={3} blur={2} color="#1C1F22" inner /> */}
           </RoundedRect>
         </Canvas>
       ) : null}

@@ -19,6 +19,15 @@ const client = new ApolloClient({
           Page: {
             keyArgs: false,
           },
+          media: {
+            keyArgs: false,
+          },
+          characters: {
+            keyArgs: false,
+          },
+          Character: {
+            keyArgs: false,
+          },
         },
       },
     },

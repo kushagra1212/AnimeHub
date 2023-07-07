@@ -213,7 +213,7 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           }}
         />
 
-        {loading || isLoading ? (
+        {loading ? (
           <View>
             <ActivityIndicator size="large" color={COLORS.primary} />
           </View>

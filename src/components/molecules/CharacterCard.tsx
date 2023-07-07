@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
+import { COLORS, SIZES } from '../../theme';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const CharacterCard = ({ item, navigation }) => {
   const { age, bloodType, favourites, gender, id, image, name } = item;
@@ -22,34 +24,27 @@ const CharacterCard = ({ item, navigation }) => {
         style={characterCardStyles.coverImage}
         source={{ uri: image.large }}
       />
+
       <View style={characterCardStyles.infoContainer}>
         <Text style={characterCardStyles.title}>{name.full}</Text>
-        {age && (
-          <View style={characterCardStyles.fieldContainer}>
-            <Text style={characterCardStyles.fieldTitle}>Age:</Text>
-            <Text style={characterCardStyles.fieldValue}>{age}</Text>
-          </View>
-        )}
-        {bloodType && (
-          <View style={characterCardStyles.fieldContainer}>
-            <Text style={characterCardStyles.fieldTitle}>Blood Type:</Text>
-            <Text style={characterCardStyles.fieldValue}>
-              {bloodType || 'Unknown'}
-            </Text>
-          </View>
-        )}
-        {favourites && (
-          <View style={characterCardStyles.fieldContainer}>
-            <Text style={characterCardStyles.fieldTitle}>Favourites:</Text>
-            <Text style={characterCardStyles.fieldValue}>{favourites}</Text>
-          </View>
-        )}
-        {gender && (
-          <View style={characterCardStyles.fieldContainer}>
-            <Text style={characterCardStyles.fieldTitle}>Gender:</Text>
-            <Text style={characterCardStyles.fieldValue}>{gender}</Text>
-          </View>
-        )}
+        {age ? (
+          <ScrollView horizontal style={characterCardStyles.cardValueContainer}>
+            <Text style={characterCardStyles.cardKey}>Age:</Text>
+            <Text style={characterCardStyles.cardValue}>{age}</Text>
+          </ScrollView>
+        ) : null}
+        {favourites ? (
+          <ScrollView horizontal style={characterCardStyles.cardValueContainer}>
+            <Text style={characterCardStyles.cardKey}>Favourites:</Text>
+            <Text style={characterCardStyles.cardValue}>{favourites}</Text>
+          </ScrollView>
+        ) : null}
+        {gender ? (
+          <ScrollView horizontal style={characterCardStyles.cardValueContainer}>
+            <Text style={characterCardStyles.cardKey}>Gender:</Text>
+            <Text style={characterCardStyles.cardValue}>{gender}</Text>
+          </ScrollView>
+        ) : null}
       </View>
     </TouchableOpacity>
   );
@@ -57,32 +52,33 @@ const CharacterCard = ({ item, navigation }) => {
 
 const characterCardStyles = StyleSheet.create({
   characterCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#222222',
     borderRadius: 16,
-    marginBottom: 16,
-    elevation: 4,
-    shadowColor: '#000000',
-    shadowOpacity: 0.2,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    marginTop: 20,
+    elevation: 10,
+    shadowColor: '#777777',
     shadowRadius: 4,
+    width: '90%',
+    marginLeft: '5%',
   },
   coverImage: {
     width: '100%',
     height: 200,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
+    backgroundColor: '#333333',
+    opacity: 0.8,
+    resizeMode: 'cover',
   },
   infoContainer: {
     padding: 16,
+    display: 'flex',
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 12,
-    color: '#333333',
+    color: COLORS.white,
+    fontFamily: 'extra-bold',
   },
   fieldContainer: {
     marginBottom: 8,
@@ -93,6 +89,23 @@ const characterCardStyles = StyleSheet.create({
   },
   fieldValue: {
     color: '#666666',
+  },
+  cardValue: {
+    color: COLORS.white,
+    fontFamily: 'semi-bold',
+    fontSize: SIZES.h4,
+    opacity: 0.7,
+  },
+  cardKey: {
+    color: COLORS.GrayPrimary,
+    fontFamily: 'extra-bold',
+    fontSize: SIZES.body3,
+    opacity: 0.5,
+    marginRight: 10,
+  },
+  cardValueContainer: {
+    display: 'flex',
+    flexDirection: 'row',
   },
 });
 export default memo(CharacterCard);

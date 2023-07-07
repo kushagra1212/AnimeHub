@@ -15,6 +15,7 @@ const StickButton = ({
   textFontFamily = 'regular',
   text = 'hello world',
   onPress = (event: GestureResponderEvent) => null,
+  grayBlur = 12,
 }: {
   canvasWidth: number;
   canvasHeight: number;
@@ -24,6 +25,7 @@ const StickButton = ({
   textFontFamily?: string;
   text?: string;
   onPress?: (event: GestureResponderEvent) => void;
+  grayBlur?: number;
 }) => {
   const roundedRectWidth = canvasWidth - 20;
   const roundedRectHeight = canvasHeight - 20;
@@ -63,7 +65,7 @@ const StickButton = ({
         >
           <Shadow dx={2} dy={2} blur={1} color="#000000" inner />
           <Shadow dx={5} dy={5} blur={5} color="#444444" inner />
-          <Shadow dx={-5} dy={-5} blur={12} color="#777777" />
+          <Shadow dx={-5} dy={-5} blur={grayBlur} color="#777777" />
           <Shadow dx={-4} dy={-4} blur={5} color="#000000" inner />
         </RoundedRect>
       </Canvas>

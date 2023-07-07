@@ -151,6 +151,7 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
                   dy={30}
                   textColor="white"
                   textFontFamily="semi-bold"
+                  grayBlur={5}
                 />
               )}
               keyExtractor={(item) => item.toString()}
@@ -213,7 +214,7 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
   );
 };
 
-const htmlStyles = {
+export const htmlStyles = {
   p: {
     fontSize: 16,
     marginBottom: 10,
@@ -228,6 +229,7 @@ const styles = StyleSheet.create({
     padding: 20,
     position: 'absolute',
   },
+
   loadingText: {
     fontSize: 18,
     color: '#333',
