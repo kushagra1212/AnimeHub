@@ -187,6 +187,7 @@ const CharacterScreen = ({ navigation }) => {
                   top: 5,
                   left: 25,
                 },
+                autofocus: false,
               }}
             />
             <Ionicons

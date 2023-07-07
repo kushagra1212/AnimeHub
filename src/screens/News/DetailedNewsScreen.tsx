@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import RenderHTML from 'react-native-render-html';
@@ -39,7 +39,6 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
       mediaId: mediaId,
     },
   });
-
   useEffect(() => {
     if (navigation && data?.Media) {
       navigation.setOptions({
@@ -207,7 +206,7 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
               </ScrollView>
             </View>
           </View>
-          <Trailer trailer={media.trailer} />
+          <Trailer trailerId={media?.trailer?.id} />
         </ScrollView>
       </View>
     </Background>

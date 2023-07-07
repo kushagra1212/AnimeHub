@@ -26,6 +26,7 @@ import { SearchInput } from '../../components/ui-components/SearchInput';
 import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
 import { InwardButtonElevated } from '../../components/ui-components/CircularButton';
 import Background from '../../components/ui-components/Background';
+import Shadder from '../../components/ui-components/Shadder';
 
 const AnimeSearchScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
@@ -47,8 +48,10 @@ const AnimeSearchScreen = ({ navigation }) => {
     }
   );
 
+  const [isLoading, setIsloading] = useState(false);
+
   useEffect(() => {
-    if (data && data?.Page && data?.Page?.media.length && !animeResponse) {
+    if (data && !animeResponse && !loading && !isLoading) {
       setAnimeResponse({
         pageInfo: data.Page.pageInfo,
         animes: data.Page.media,
@@ -88,7 +91,13 @@ const AnimeSearchScreen = ({ navigation }) => {
   }, [navigation]);
 
   const handleLoadMore = () => {
-    if (animeResponse && animeResponse.pageInfo.hasNextPage) {
+    if (
+      animeResponse &&
+      !isLoading &&
+      animeResponse.pageInfo.hasNextPage &&
+      !loading
+    ) {
+      setIsloading(true);
       fetchMore({
         variables: {
           page: animeResponse.pageInfo.currentPage + 1,
@@ -96,23 +105,17 @@ const AnimeSearchScreen = ({ navigation }) => {
       })
         .then((res) => {
           setAnimeResponse((prev) => {
-            const newAnimes = [
-              ...new Map(
-                [...prev.animes, ...res.data.Page.media].map((v) => [
-                  v.id.toString(),
-                  v,
-                ])
-              ).values(),
-            ];
-
             return {
               pageInfo: res.data.Page.pageInfo,
-              animes: newAnimes,
+              animes: [...prev.animes, ...res.data.Page.media],
             };
           });
         })
         .catch((err) => {
           console.log(err, 'Anime Response Error: AnimeSearchScreen');
+        })
+        .finally(() => {
+          setIsloading(false);
         });
     }
   };
@@ -143,6 +146,7 @@ const AnimeSearchScreen = ({ navigation }) => {
           roundedRectHeight={50}
           roundedRectWidth={50}
           onPress={goBackHandler}
+          zIndex={100}
         >
           <MaterialCommunityIcons
             name="arrow-left"
@@ -219,7 +223,15 @@ const AnimeSearchScreen = ({ navigation }) => {
         ) : null}
 
         {animeResponse && queryText && queryText !== '' ? (
-          <View style={{ flex: 1, height: 1000 }}>
+          <View
+            style={{
+              flex: 1,
+              height: 800,
+              marginTop: 100,
+              marginBottom: 50,
+            }}
+          >
+            <Shadder />
             <FlashList
               estimatedItemSize={2000}
               data={animeResponse.animes}
@@ -237,6 +249,7 @@ const AnimeSearchScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: WINDOW_HEIGHT,
   },
   message: {
     fontSize: 48,

@@ -55,12 +55,10 @@ export const typeOptionsCharacter = [
   },
 ];
 export const LOAD_FONTS = {
-  'bold-itatic': require('../../assets/fonts/JetBrainsMono-BoldItalic.ttf'),
   medium: require('../../assets/fonts/JetBrainsMono-Medium.ttf'),
   'semi-bold': require('../../assets/fonts/JetBrainsMono-SemiBold.ttf'),
   regular: require('../../assets/fonts/JetBrainsMonoNL-Regular.ttf'),
   thin: require('../../assets/fonts/JetBrainsMonoNL-Thin.ttf'),
-  'extra-light': require('../../assets/fonts/JetBrainsMonoNL-ExtraLight.ttf'),
   'extra-bold': require('../../assets/fonts/JetBrainsMonoNL-ExtraBold.ttf'),
 };
 export const tabBarStyle: any = {

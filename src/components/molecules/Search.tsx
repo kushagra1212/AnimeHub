@@ -14,6 +14,7 @@ const Search = forwardRef(
       showBackButton,
       placeholder,
       containerStyles,
+      autofocus = true,
     } = props;
     const keyboardDidHideCallback = () => {
       ref.current.blur?.();
@@ -42,7 +43,7 @@ const Search = forwardRef(
         )}
         <View style={specificStyles.inputContainer}>
           <TextInput
-            autoFocus
+            autoFocus={autofocus}
             ref={ref}
             style={specificStyles.input}
             placeholder={placeholder}

@@ -2,14 +2,14 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { COLORS } from '../../theme';
 import VideoPlayer from './VieoPlayer';
 
-const Trailer = ({ trailer }: { trailer: any }) => {
-  if (!trailer) return null;
+const Trailer = ({ trailerId }: { trailerId: string }) => {
+  if (!trailerId) return null;
 
   return (
     <View style={styles.trailerContainer}>
       <Text style={styles.subtitle}>Trailer</Text>
       <View style={styles.trailerDetails}>
-        <VideoPlayer id={trailer.id} />
+        <VideoPlayer id={trailerId} />
       </View>
       {/* <Image
         source={{ uri: trailer.thumbnail }}

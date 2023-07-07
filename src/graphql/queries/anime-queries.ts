@@ -100,17 +100,6 @@ export const GET_ANIME_DETAILS = gql`
         day
         year
       }
-      staff {
-        edges {
-          node {
-            image {
-              medium
-            }
-            id
-            gender
-          }
-        }
-      }
       season
       rankings {
         context

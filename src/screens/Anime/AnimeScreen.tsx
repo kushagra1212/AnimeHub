@@ -58,7 +58,12 @@ const AnimeScreen = ({ navigation }) => {
   const handleSearchSubmit = () => {};
 
   const handleLoadMore = () => {
-    if (animeResponse && !isLoadiing && !loading) {
+    if (
+      animeResponse &&
+      !isLoadiing &&
+      !loading &&
+      animeResponse.pageInfo.hasNextPage
+    ) {
       setIsLoading(true);
       fetchMore({
         variables: {
@@ -175,6 +180,7 @@ const AnimeScreen = ({ navigation }) => {
                   top: 5,
                   left: 25,
                 },
+                autofocus: false,
               }}
             />
             <Ionicons

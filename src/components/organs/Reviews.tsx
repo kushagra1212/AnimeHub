@@ -11,6 +11,8 @@ import {
   Modal,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { COLORS } from '../../theme';
+import ReviewCardBackground from '../ui-components/ReviewCardBackground';
 const GET_ANIME_REVIEWS = gql`
   query Page($page: Int, $perPage: Int, $mediaId: Int, $sort: [ReviewSort]) {
     Page(page: $page, perPage: $perPage) {
@@ -108,7 +110,7 @@ const Reviews = ({ mediaId }) => {
   if (!reviews || reviews.length === 0) return null;
   return (
     <View style={reviewStyles.container}>
-      <Text style={reviewStyles.reviews}>Reviews:</Text>
+      <Text style={reviewStyles.reviews}>Reviews</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -116,37 +118,44 @@ const Reviews = ({ mediaId }) => {
       >
         {reviews &&
           reviews.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={reviewStyles.reviewCard}
-              activeOpacity={0.7}
-              onPress={() => handleReviewPress(item.id)}
-            >
-              <Image
-                style={reviewStyles.avatar}
-                source={{ uri: item.user.avatar.medium }}
-              />
-              <View style={reviewStyles.reviewInfo}>
-                <Text style={reviewStyles.reviewUsername}>
-                  {item.user.name}
-                </Text>
-                <Text style={reviewStyles.reviewDate}>
-                  {new Date(item.createdAt * 1000).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </Text>
-                <Text>{item.body.slice(0, 100) + '....'}</Text>
-              </View>
-            </TouchableOpacity>
+            <View style={reviewStyles.reviewCard}>
+              <ReviewCardBackground>
+                <TouchableOpacity
+                  key={item.id}
+                  activeOpacity={0.7}
+                  onPress={() => handleReviewPress(item.id)}
+                  style={[reviewStyles.reviewCard]}
+                >
+                  <Image
+                    style={reviewStyles.avatar}
+                    source={{ uri: item.user.avatar.medium }}
+                  />
+                  <View style={reviewStyles.reviewInfo}>
+                    <Text style={reviewStyles.reviewUsername}>
+                      {item.user.name}
+                    </Text>
+                    <Text style={reviewStyles.reviewDate}>
+                      {new Date(item.createdAt * 1000).toLocaleDateString(
+                        'en-US',
+                        {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        }
+                      )}
+                    </Text>
+                    <Text>{item.body.slice(0, 100) + '....'}</Text>
+                  </View>
+                </TouchableOpacity>
+              </ReviewCardBackground>
+            </View>
           ))}
         {reviewsPageInfo?.hasNextPage && (
           <TouchableOpacity
             style={reviewStyles.loadMoreButton}
             onPress={loadMoreReviews}
           >
-            <AntDesign name="arrowright" size={24} color="#333333" />
+            <AntDesign name="arrowright" size={24} color={COLORS.white} />
           </TouchableOpacity>
         )}
       </ScrollView>
@@ -196,10 +205,10 @@ const reviewStyles = StyleSheet.create({
   },
   reviews: {
     fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: 16,
     paddingHorizontal: 16,
-    color: '#333333',
+    color: COLORS.white,
+    fontFamily: 'extra-bold',
   },
   errorText: {
     fontSize: 16,
@@ -217,13 +226,11 @@ const reviewStyles = StyleSheet.create({
   reviewCard: {
     width: 280,
     height: 300,
-    backgroundColor: '#ffffff',
     borderRadius: 12,
     padding: 16,
     marginRight: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 2,
   },
   avatar: {
     width: 100,
@@ -238,22 +245,25 @@ const reviewStyles = StyleSheet.create({
   },
   reviewUsername: {
     fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
-    color: '#333333',
+    fontStyle: 'extra-bold',
+    color: COLORS.white,
   },
   reviewDate: {
     fontSize: 14,
-    color: '#888888',
+    color: COLORS.white,
     marginBottom: 12,
+    fontStyle: 'thin',
+    opacity: 0.8,
   },
   reviewBodyContainer: {
     maxHeight: 300,
   },
   reviewBody: {
     fontSize: 16,
-    color: '#333333',
+    color: COLORS.white,
+    fontFamily: 'thin',
     textAlign: 'center',
   },
   closeButton: {

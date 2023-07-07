@@ -169,6 +169,7 @@ export const InwardButtonElevated = ({
   focused,
   roundedRectWidth = 30,
   roundedRectHeight = 30,
+  zIndex = 1,
 }: {
   canvasWidth: number;
   canvasHeight: number;
@@ -182,6 +183,7 @@ export const InwardButtonElevated = ({
   focused: boolean;
   roundedRectWidth?: number;
   roundedRectHeight?: number;
+  zIndex?: number;
 }) => {
   return (
     <TouchableOpacity
@@ -197,6 +199,7 @@ export const InwardButtonElevated = ({
           },
         ],
         position: 'absolute',
+        zIndex: zIndex,
       }}
       onPress={onPress}
     >
