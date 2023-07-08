@@ -21,6 +21,7 @@ import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
 import RenderHTML from 'react-native-render-html';
 import { htmlStyles } from '../News/DetailedNewsScreen';
 import Trailer from '../../components/molecules/Trailer';
+import { showMessage } from 'react-native-flash-message';
 type AnimeDetailsScreenProps = {
   route: {
     params: {
@@ -59,10 +60,17 @@ const AnimeDetailsScreen: React.FC<AnimeDetailsScreenProps> = ({
     navigation.goBack();
   };
 
-  const handleTrailerPress = (site) => {
-    // Handle trailer press action here
-  };
-
+  useEffect(() => {
+    if (error) {
+      showMessage({
+        message: 'Error !',
+        description: 'Something Went Wrong, try again later',
+        type: 'danger',
+        color: 'white',
+        backgroundColor: COLORS.redPrimary,
+      });
+    }
+  }, [error]);
   if (loading) {
     return (
       <Background>
@@ -72,15 +80,6 @@ const AnimeDetailsScreen: React.FC<AnimeDetailsScreenProps> = ({
       </Background>
     );
   }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Error: {error.message}</Text>
-      </View>
-    );
-  }
-
   const anime = data?.Media;
 
   return (

@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { SearchInput } from '../../components/ui-components/SearchInput';
 import { Ionicons } from '@expo/vector-icons';
 import Shadder from '../../components/ui-components/Shadder';
+import { showMessage } from 'react-native-flash-message';
 const AnimeScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
 
@@ -57,13 +58,29 @@ const AnimeScreen = ({ navigation }) => {
             };
           });
         })
-        .catch((err) => console.log(err, 'Anime Response'))
+        .catch((err) => {
+          console.log(err, 'Anime Response');
+          setAnimeResponse({
+            pageInfo: data.Page.pageInfo,
+            animes: data.Page.media,
+          });
+        })
         .finally(() => {
           setIsLoading(false);
         });
     }
   };
-
+  useEffect(() => {
+    if (error) {
+      showMessage({
+        message: 'Error !',
+        description: 'Something Went Wrong, try again later',
+        type: 'danger',
+        color: 'white',
+        backgroundColor: COLORS.redPrimary,
+      });
+    }
+  }, [error]);
   useEffect(() => {
     if (data && !animeResponse && !loading) {
       setAnimeResponse({

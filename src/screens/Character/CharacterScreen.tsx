@@ -19,6 +19,7 @@ import Background from '../../components/ui-components/Background';
 import { SearchInput } from '../../components/ui-components/SearchInput';
 import { Ionicons } from '@expo/vector-icons';
 import Shadder from '../../components/ui-components/Shadder';
+import { showMessage } from 'react-native-flash-message';
 interface SemiCharacter {
   id: number;
   name?: {
@@ -111,12 +112,30 @@ const CharacterScreen = ({ navigation }) => {
         })
         .catch((err) => {
           console.log(err, 'CharacterScreen N Error');
+          showMessage({
+            message: 'Error !',
+            description: 'Something Went Wrong, try again later',
+            type: 'danger',
+            color: 'white',
+            backgroundColor: COLORS.redPrimary,
+          });
         })
         .finally(() => {
           setIsloading(false);
         });
     }
   };
+  useEffect(() => {
+    if (error) {
+      showMessage({
+        message: 'Error !',
+        description: 'Something Went Wrong, try again later',
+        type: 'danger',
+        color: 'white',
+        backgroundColor: COLORS.redPrimary,
+      });
+    }
+  }, [error]);
 
   const Card = ({ item }) => {
     return <CharacterCard {...{ item, navigation }} />;

@@ -23,6 +23,7 @@ import Animated, {
 import { tabBarStyle } from '../../utils';
 import Shadder from '../../components/ui-components/Shadder';
 import { Text } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 const { width, height: SCREEEN_HEIGHT } = Dimensions.get('window');
 
 interface AnimeNewsFeedScreenProps {
@@ -73,21 +74,6 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     };
   });
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     const unsubscribe = navigation.addListener('focus', () => {
-  //       // Code to execute when the screen gains focus (returns to screen)
-  //       console.log('Screen is focused');
-  //     });
-
-  //     return () => {
-  //       unsubscribe();
-  //       // Code to execute when the screen loses focus
-  //       console.log('Screen lost focus');
-  //     };
-  //   }, [navigation])
-  // );
-
   const handleNewsItemPress = (item: Media) => {
     setShowBottomSheet(false);
     navigation.navigate('DetailedNewsScreen', { mediaId: item.id });
@@ -130,7 +116,16 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
             media: [...response.media, ...res.data.Page.media],
           });
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          console.log(err);
+          showMessage({
+            message: 'Error !',
+            description: 'Something Went Wrong, try again later',
+            type: 'danger',
+            color: 'white',
+            backgroundColor: COLORS.redPrimary,
+          });
+        })
         .finally(() => {
           setIsLoading(false);
         });
@@ -168,9 +163,18 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     }
   }, [data]);
 
-  if (error) {
-    return <View>Something went wrong</View>;
-  }
+  useEffect(() => {
+    if (error) {
+      showMessage({
+        message: 'Error !',
+        description: 'Something Went Wrong, try again later',
+        type: 'danger',
+        color: 'white',
+        backgroundColor: COLORS.redPrimary,
+      });
+    }
+  }, [error]);
+
   const renderNewsItem = ({ item }: { item: Media }) => {
     return (
       <NewsCard

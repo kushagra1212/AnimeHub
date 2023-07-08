@@ -9,6 +9,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { LOAD_FONTS } from './src/utils';
 import client from './src/graphql/client';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import FlashMessage from 'react-native-flash-message';
+import Background from './src/components/ui-components/Background';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,9 +43,9 @@ export default function App() {
   }
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar style="dark" />
+      <Background>
+        <StatusBar style="dark" />
 
-      {fontsLoaded ? (
         <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
           <ApolloProvider client={client}>
             <NavigationContainer>
@@ -51,7 +53,12 @@ export default function App() {
             </NavigationContainer>
           </ApolloProvider>
         </View>
-      ) : null}
+        <FlashMessage
+          position="top"
+          style={styles.errorStyle}
+          duration={3000}
+        />
+      </Background>
     </GestureHandlerRootView>
   );
 }
@@ -62,5 +69,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  errorStyle: {
+    top: 80,
+    borderRadius: 30,
+    fontFamily: 'extra-bold',
   },
 });

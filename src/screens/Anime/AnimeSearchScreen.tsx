@@ -13,7 +13,7 @@ import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
 import { InwardButtonElevated } from '../../components/ui-components/CircularButton';
 import Background from '../../components/ui-components/Background';
 import Shadder from '../../components/ui-components/Shadder';
-
+import { showMessage } from 'react-native-flash-message';
 const AnimeSearchScreen = ({ navigation }) => {
   const searchInputRef = useRef(null);
 
@@ -97,6 +97,13 @@ const AnimeSearchScreen = ({ navigation }) => {
         })
         .catch((err) => {
           console.log(err, 'Anime Response Error: AnimeSearchScreen');
+          showMessage({
+            message: 'Error !',
+            description: 'Something Went Wrong, try again later',
+            type: 'danger',
+            color: 'white',
+            backgroundColor: COLORS.redPrimary,
+          });
         })
         .finally(() => {
           setIsloading(false);
@@ -111,6 +118,17 @@ const AnimeSearchScreen = ({ navigation }) => {
 
     return () => clearTimeout(timer);
   }, []);
+  useEffect(() => {
+    if (error) {
+      showMessage({
+        message: 'Error !',
+        description: 'Something Went Wrong, try again later',
+        type: 'danger',
+        color: 'white',
+        backgroundColor: COLORS.redPrimary,
+      });
+    }
+  }, [error]);
   const Card = ({ item }) => {
     return <AnimeCard item={item} navigation={navigation} />;
   };

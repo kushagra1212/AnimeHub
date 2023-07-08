@@ -24,6 +24,7 @@ import { FlashList } from '@shopify/flash-list';
 import StickButton from '../../components/ui-components/StickButton';
 import NewsCardContent from '../../components/organs/NewsCardContent';
 import Trailer from '../../components/molecules/Trailer';
+import { showMessage } from 'react-native-flash-message';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 type DetailedNewsScreenProps = {
   route: {
@@ -63,6 +64,17 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
     };
   }, [navigation, data?.Media]);
 
+  useEffect(() => {
+    if (error) {
+      showMessage({
+        message: 'Error !',
+        description: 'Something Went Wrong, try again later',
+        type: 'danger',
+        color: 'white',
+        backgroundColor: COLORS.redPrimary,
+      });
+    }
+  }, [error]);
   if (loading) {
     return (
       <Background>
@@ -70,14 +82,6 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
           <ActivityIndicator size="large" color="#0DD9FA" />
         </View>
       </Background>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Error: {error.message}</Text>
-      </View>
     );
   }
   const goBackHandler = () => {

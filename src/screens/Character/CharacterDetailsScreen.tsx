@@ -20,6 +20,7 @@ import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
 import { ImageCardNeon } from '../../components/ui-components/ImageCard';
 import RenderHTML from 'react-native-render-html';
 import { htmlStyles } from '../News/DetailedNewsScreen';
+import { showMessage } from 'react-native-flash-message';
 type CharacterDetailsScreenProps = {
   route: {
     params: {
@@ -58,6 +59,18 @@ const CharacterDetailsScreen = ({
   const goBackHandler = () => {
     navigation.goBack();
   };
+
+  useEffect(() => {
+    if (error) {
+      showMessage({
+        message: 'Error !',
+        description: 'Something Went Wrong, try again later',
+        type: 'danger',
+        color: 'white',
+        backgroundColor: COLORS.redPrimary,
+      });
+    }
+  }, [error]);
   if (loading) {
     return (
       <Background>
@@ -134,18 +147,18 @@ const CharacterDetailsScreen = ({
           <Text style={styles.title}>{name.full}</Text>
 
           <ScrollView style={styles.detailsContainer}>
-            {age && (
+            {age ? (
               <View style={styles.fieldContainer}>
                 <Text style={styles.fieldTitle}>Age</Text>
                 <Text style={styles.fieldValue}>{age}</Text>
               </View>
-            )}
-            {bloodType && (
+            ) : null}
+            {bloodType ? (
               <View style={styles.fieldContainer}>
                 <Text style={styles.fieldTitle}>Blood Type</Text>
                 <Text style={styles.fieldValue}>{bloodType || 'Unknown'}</Text>
               </View>
-            )}
+            ) : null}
 
             {description ? (
               <View>
@@ -159,29 +172,30 @@ const CharacterDetailsScreen = ({
                 />
               </View>
             ) : null}
-            {favourites && (
+            {favourites ? (
               <View style={styles.fieldContainer}>
                 <Text style={styles.fieldTitle}>Favourites</Text>
                 <Text style={styles.fieldValue}>{favourites}</Text>
               </View>
-            )}
-            {gender && (
+            ) : null}
+            {gender ? (
               <View style={styles.fieldContainer}>
                 <Text style={styles.fieldTitle}>Gender</Text>
                 <Text style={styles.fieldValue}>{gender}</Text>
               </View>
-            )}
+            ) : null}
             <View style={styles.fieldContainer}>
               <Text style={styles.fieldTitle}>Gallery</Text>
               <ScrollView horizontal>
                 <View style={styles.mediaContainer}>
-                  {media.nodes.map((item, index) => (
-                    <Image
-                      key={index.toString()}
-                      style={styles.mediaImage}
-                      source={{ uri: item.coverImage.extraLarge }}
-                    />
-                  ))}
+                  {media?.nodes &&
+                    media.nodes.map((item, index) => (
+                      <Image
+                        key={index.toString()}
+                        style={styles.mediaImage}
+                        source={{ uri: item?.coverImage?.extraLarge }}
+                      />
+                    ))}
                 </View>
               </ScrollView>
             </View>
