@@ -1,13 +1,5 @@
-import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
-import Svg, {
-  Defs,
-  Rect,
-  LinearGradient,
-  Stop,
-  Mask,
-  Circle,
-} from 'react-native-svg';
+import Svg, { Defs, Rect, LinearGradient, Stop } from 'react-native-svg';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 const FROM_COLOR = 'rgba(142, 45, 226, 1)';

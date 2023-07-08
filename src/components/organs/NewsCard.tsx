@@ -1,17 +1,15 @@
-import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import BackgroundCard from '../ui-components/BackgroundCard';
 import RenderHTML from 'react-native-render-html';
 import { Text } from 'react-native';
 import SeatedButton from '../ui-components/SeatedButton';
-import { Ionicons, FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SIZES } from '../../theme';
-const { width, height } = Dimensions.get('window');
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 import StickButton from '../ui-components/StickButton';
 import { FlashList } from '@shopify/flash-list';
-import WebDisplay from './WebDisplay';
 import NewsCardContent from './NewsCardContent';
-import { getNewsSource } from '../../utils';
+const { width, height } = Dimensions.get('window');
 export const baseStyleHtmlDesc = {
   fontSize: 15,
   color: COLORS.GraySecondary,

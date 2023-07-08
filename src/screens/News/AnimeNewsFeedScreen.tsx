@@ -1,29 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  Text,
-  Dimensions,
-  ActivityIndicator,
-  Image,
-} from 'react-native';
+import { View, StyleSheet, Dimensions, Image } from 'react-native';
 import { memo } from 'react';
-import { useQuery, gql, useLazyQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { AnimeNewsData, AnimeNewsVariables, Media } from '../../types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NewsStackParamList } from '../../Navigation';
-import { COLORS, SIZES } from '../../theme';
+import { COLORS } from '../../theme';
 import CircularButton from '../../components/ui-components/CircularButton';
 
 import Background from '../../components/ui-components/Background';
 import NewsCard from '../../components/organs/NewsCard';
 import { FlashList } from '@shopify/flash-list';
-import { useFocusEffect } from '@react-navigation/native';
 import { GET_ANIME_NEWS } from '../../graphql/queries/news-queries';
-import { LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
 import BottomSheet, {
   BottomSheetRef,
 } from '../../components/molecules/BottomSheet';
@@ -33,7 +21,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { ArrNoDupe, tabBarStyle } from '../../utils';
+import { tabBarStyle } from '../../utils';
 import Shadder from '../../components/ui-components/Shadder';
 const { width, height: SCREEEN_HEIGHT } = Dimensions.get('window');
 

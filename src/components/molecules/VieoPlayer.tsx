@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, Button } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import WebView from 'react-native-webview';
 import { WINDOW_WIDTH } from '../../utils';
 

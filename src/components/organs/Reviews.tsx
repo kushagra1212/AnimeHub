@@ -1,4 +1,4 @@
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
-import ReviewCardBackground from '../ui-components/ReviewCardBackground';
 import RenderHTML from 'react-native-render-html';
 import { baseStyleHtmlDesc } from './NewsCard';
 import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../../utils';

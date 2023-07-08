@@ -1,7 +1,7 @@
 import { Dimensions, View } from 'react-native';
 import { LinearGradient, Rect, Stop, Svg } from 'react-native-svg';
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 import { memo } from 'react';
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const Shadder = () => {
   return (
     <View

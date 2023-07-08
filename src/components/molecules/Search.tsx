@@ -1,5 +1,5 @@
 import { forwardRef, memo, useEffect } from 'react';
-import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
 import { Keyboard } from 'react-native';

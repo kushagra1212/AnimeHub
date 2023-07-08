@@ -1,11 +1,5 @@
 import { Canvas, RoundedRect, Shadow } from '@shopify/react-native-skia';
-import {
-  GestureResponderEvent,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { memo } from 'react';
+import { GestureResponderEvent, Text, View } from 'react-native';
 const StickButton = ({
   canvasWidth,
   canvasHeight,

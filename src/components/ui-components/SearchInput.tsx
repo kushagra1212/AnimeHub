@@ -1,6 +1,5 @@
 import { Canvas, RoundedRect, Shadow } from '@shopify/react-native-skia';
 import { GestureResponderEvent, View } from 'react-native';
-import Shadder from './Shadder';
 
 export const SearchInput = ({
   canvasWidth,

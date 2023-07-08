@@ -1,12 +1,5 @@
-import React, { memo } from 'react';
-import {
-  View,
-  Image,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { memo } from 'react';
+import { View, Image, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { COLORS, SIZES } from '../../theme';
 import { ScrollView } from 'react-native-gesture-handler';
 

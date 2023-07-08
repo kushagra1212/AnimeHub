@@ -1,7 +1,6 @@
-import { FlashList } from '@shopify/flash-list';
 import { StyleSheet } from 'react-native';
 import { Text, View } from 'react-native';
-import StickButton, { StickFilterButton } from '../ui-components/StickButton';
+import { StickFilterButton } from '../ui-components/StickButton';
 import {
   genreOptions,
   sortOptions,

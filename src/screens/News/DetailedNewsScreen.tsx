@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,16 +7,14 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import RenderHTML from 'react-native-render-html';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { NewsStackParamList } from '../../Navigation';
 import { Media } from '../../types';
-import { memo } from 'react';
 import { GET_NEWS_DETAILS } from '../../graphql/queries/news-queries';
-import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
+import { WINDOW_WIDTH, tabBarStyle } from '../../utils';
 import { InwardButtonElevated } from '../../components/ui-components/CircularButton';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
 import { Dimensions } from 'react-native';

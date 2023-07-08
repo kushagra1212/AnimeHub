@@ -4,26 +4,11 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated';
 import { useImperativeHandle, useRef } from 'react';
-import { COLORS } from '../../theme';
-import { forwardRef, useEffect } from 'react';
+import { forwardRef } from 'react';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { memo } from 'react';
-import {
-  Blur,
-  BlurMask,
-  Box,
-  Canvas,
-  RoundedRect,
-  Shadow,
-  rect,
-  rrect,
-  Circle,
-  Image as SkiaImage,
-  useImage,
-} from '@shopify/react-native-skia';
+import { useImage } from '@shopify/react-native-skia';
 import WebView from 'react-native-webview';
 const { width: SCREEN_WIDTH, height: SCREEEN_HEIGHT } =
   Dimensions.get('window');

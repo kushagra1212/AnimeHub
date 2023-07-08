@@ -1,7 +1,6 @@
 import { Canvas, RoundedRect, Shadow } from '@shopify/react-native-skia';
 import { GestureResponderEvent, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { memo } from 'react';
 import { View } from 'react-native';
 const CircularButton = ({
   canvasWidth,

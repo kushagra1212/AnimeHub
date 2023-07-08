@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,11 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
-  TouchableOpacity,
 } from 'react-native';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AnimeStackParamList } from '../../Navigation';
 import Reviews from '../../components/organs/Reviews';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { GET_ANIME_DETAILS } from '../../graphql/queries/anime-queries';
 import Background from '../../components/ui-components/Background';
 import { InwardButtonElevated } from '../../components/ui-components/CircularButton';

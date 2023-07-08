@@ -1,11 +1,5 @@
 import { Canvas, RoundedRect, Shadow } from '@shopify/react-native-skia';
-import {
-  GestureResponderEvent,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { memo } from 'react';
+import { GestureResponderEvent, Text, TouchableOpacity } from 'react-native';
 const SeatedButton = ({
   canvasWidth,
   canvasHeight,

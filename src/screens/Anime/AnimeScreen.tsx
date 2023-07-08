@@ -1,30 +1,9 @@
-import {
-  forwardRef,
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  FlatList,
-  Image,
-  ActivityIndicator,
-} from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { COLORS } from '../../theme';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
-import { WINDOW_WIDTH, throttleFunc } from '../../utils';
-import AnimeSearch from '../../components/molecules/Search';
+import { useQuery } from '@apollo/client';
+import { WINDOW_WIDTH } from '../../utils';
 import AnimeCard from '../../components/molecules/AnimeCard';
-import { useFocusEffect } from '@react-navigation/native';
 import Search from '../../components/molecules/Search';
 import { FlashList } from '@shopify/flash-list';
 import { GET_ANIMES_USING_SEARCH } from '../../graphql/queries/anime-queries';

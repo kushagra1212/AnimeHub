@@ -1,27 +1,13 @@
-import {
-  forwardRef,
-  memo,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import {
-  AntDesign,
-  Ionicons,
-  MaterialCommunityIcons,
-} from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS } from '../../theme';
-import { gql, useLazyQuery, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 
 import AnimeCard from '../../components/molecules/AnimeCard';
 import Search from '../../components/molecules/Search';
 import { FlashList } from '@shopify/flash-list';
 import { GET_ANIMES_USING_SEARCH } from '../../graphql/queries/anime-queries';
-import { set } from 'react-native-reanimated';
 import { SearchInput } from '../../components/ui-components/SearchInput';
 import { WINDOW_HEIGHT, WINDOW_WIDTH, tabBarStyle } from '../../utils';
 import { InwardButtonElevated } from '../../components/ui-components/CircularButton';

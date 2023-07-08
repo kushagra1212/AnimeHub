@@ -1,5 +1,4 @@
-import { FlashList, ListRenderItem } from '@shopify/flash-list';
-import { memo } from 'react';
+import { FlashList } from '@shopify/flash-list';
 import {
   StyleSheet,
   View,

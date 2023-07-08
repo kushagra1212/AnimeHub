@@ -5,12 +5,11 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { CharacterSearchStackParamList } from '../../Navigation';
 import { useEffect, useState } from 'react';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { memo } from 'react';
 import { GET_CHARACTER_DETAILS } from '../../graphql/queries/character-queries';
 import { InwardButtonElevated } from '../../components/ui-components/CircularButton';

@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "AnimeHub",
-    "slug": "AnimeHub",
+    "slug": "animehub",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/adaptive-icon.png",
@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
-      }
+      },
+      "package": "com.kushagra711.animehub"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c903d963-33c0-4628-b5c5-1f9d98b7d8df"
+      }
+    },
+    "owner": "kushagra711"
   }
 }

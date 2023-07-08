@@ -1,8 +1,5 @@
-import { NavigationContainer, RouteProp } from '@react-navigation/native';
-import {
-  createBottomTabNavigator,
-  BottomTabNavigationProp,
-} from '@react-navigation/bottom-tabs';
+import { RouteProp } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -15,15 +12,13 @@ import AnimeDetailsScreen from '../screens/Anime/AnimeDetailsScreen';
 import AnimeScreen from '../screens/Anime/AnimeScreen';
 import AnimeSearchScreen from '../screens/Anime/AnimeSearchScreen';
 import CharacterScreen from '../screens/Character/CharacterScreen';
-const Stack = createNativeStackNavigator();
-import { RegisteredStyle, View, ViewStyle } from 'react-native';
 import {
   AnimeTabBarIcon,
   CharacterTabBarIcon,
   NewsTabBarIcon,
 } from '../components/organs/tab-bar-icons';
-import Animated from 'react-native-reanimated';
 import { tabBarStyle } from '../utils';
+const Stack = createNativeStackNavigator();
 export type NewsStackParamList = {
   AnimeNewsFeedScreen: undefined;
   DetailedNewsScreen: { mediaId: string };

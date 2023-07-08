@@ -1,5 +1,4 @@
 import { Dimensions } from 'react-native';
-import { Stop } from 'react-native-svg';
 export const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } =
   Dimensions.get('window');
 export const throttleFunc = (func, interval) => {
@@ -65,8 +64,8 @@ export const tabBarStyle: any = {
   backgroundColor: '#000',
   borderTopColor: '#000',
   height: 60,
-  borderTopEndRadius: 50,
-  borderTopStartRadius: 50,
+  borderTopEndRadius: 30,
+  borderTopStartRadius: 30,
   elevation: 40,
   position: 'absolute',
   left: 0,
