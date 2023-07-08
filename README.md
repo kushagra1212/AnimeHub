@@ -40,22 +40,6 @@ Figures 2: Effortlessly search for anime characters and delve into their detaile
 
 - **Anime Details**: Access a treasure trove of data on various anime titles, including synopses, genres, ratings, and much more.
 
-
-
-## Technologies Utilized
-
-AnimeHub harnesses the power of cutting-edge technologies to deliver a robust and captivating user experience:
-
-- **React Native**: The renowned JavaScript library enables the development of high-quality, cross-platform mobile applications.
-
-- **Expo**: A comprehensive framework and platform that leverages React Native, allowing for universal application development.
-
-- **GraphQL**: A powerful query language for APIs, seamlessly integrated with the Apollo GraphQL client to ensure efficient data retrieval.
-
-- **React Native Skia**: This innovative library serves as the foundation for achieving visually striking neumorphic effects, elevating the app's aesthetic appeal.
-
-- **AniList API**: AnimeHub utilizes the AniList API, a comprehensive anime and manga database, to fetch and display accurate and up-to-date anime and character information.
-
 Installation
 --------------
 To run AnimeHub on your local machine, please make sure you have the following prerequisites installed:
@@ -99,7 +83,19 @@ Follow these steps to install and run AnimeHub:
 
 Please note that AnimeHub requires certain dependencies and Expo version compatibility. Make sure you have the prerequisites installed and up to date.
 
+## Technologies Utilized
 
+AnimeHub harnesses the power of cutting-edge technologies to deliver a robust and captivating user experience:
+
+- **React Native**: The renowned JavaScript library enables the development of high-quality, cross-platform mobile applications.
+
+- **Expo**: A comprehensive framework and platform that leverages React Native, allowing for universal application development.
+
+- **GraphQL**: A powerful query language for APIs, seamlessly integrated with the Apollo GraphQL client to ensure efficient data retrieval.
+
+- **React Native Skia**: This innovative library serves as the foundation for achieving visually striking neumorphic effects, elevating the app's aesthetic appeal.
+
+- **AniList API**: AnimeHub utilizes the AniList API, a comprehensive anime and manga database, to fetch and display accurate and up-to-date anime and character information.
 
 ## License
 
