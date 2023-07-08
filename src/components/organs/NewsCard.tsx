@@ -12,7 +12,7 @@ import { FlashList } from '@shopify/flash-list';
 import WebDisplay from './WebDisplay';
 import NewsCardContent from './NewsCardContent';
 import { getNewsSource } from '../../utils';
-const baseStyleHtmlDesc = {
+export const baseStyleHtmlDesc = {
   fontSize: 15,
   color: COLORS.GraySecondary,
   width: '100%',

@@ -109,3 +109,29 @@ export const GET_ANIME_DETAILS = gql`
     }
   }
 `;
+export const GET_ANIME_REVIEWS = gql`
+  query Page($page: Int, $perPage: Int, $mediaId: Int, $sort: [ReviewSort]) {
+    Page(page: $page, perPage: $perPage) {
+      reviews(mediaId: $mediaId, sort: $sort) {
+        body(asHtml: true)
+        id
+        user {
+          id
+          name
+          createdAt
+          avatar {
+            medium
+          }
+        }
+        createdAt
+        userId
+        mediaId
+      }
+      pageInfo {
+        currentPage
+        hasNextPage
+        lastPage
+      }
+    }
+  }
+`;

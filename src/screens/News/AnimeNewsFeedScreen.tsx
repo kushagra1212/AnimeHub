@@ -8,6 +8,7 @@ import {
   Text,
   Dimensions,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { memo } from 'react';
 import { useQuery, gql, useLazyQuery } from '@apollo/client';
@@ -214,9 +215,17 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
         />
 
         {loading ? (
-          <View>
-            <ActivityIndicator size="large" color={COLORS.primary} />
-          </View>
+          <Image
+            source={require('../../../assets/loader.gif')}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: width,
+              height: SCREEEN_HEIGHT,
+              zIndex: 1,
+            }}
+          />
         ) : null}
 
         {showBottomSheet ? (

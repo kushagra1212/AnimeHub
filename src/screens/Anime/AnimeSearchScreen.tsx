@@ -217,8 +217,8 @@ const AnimeSearchScreen = ({ navigation }) => {
           <Text style={styles.message}>Search Anime Here</Text>
         ) : null}
         {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={COLORS.greenPrimary} />
+          <View style={styles.loading}>
+            <ActivityIndicator size="large" color="#0DD9FA" />
           </View>
         ) : null}
 
@@ -262,6 +262,12 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
     alignItems: 'center',
   },
 });

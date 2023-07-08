@@ -67,9 +67,11 @@ const AnimeDetailsScreen: React.FC<AnimeDetailsScreenProps> = ({
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#888888" />
-      </View>
+      <Background>
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color="#0DD9FA" />
+        </View>
+      </Background>
     );
   }
 
@@ -351,6 +353,12 @@ const styles = StyleSheet.create({
     height: WINDOW_HEIGHT - 400,
     overflow: 'scroll',
     width: WINDOW_WIDTH - 30,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
   },
 });
 

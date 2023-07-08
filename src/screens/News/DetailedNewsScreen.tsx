@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import RenderHTML from 'react-native-render-html';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -60,9 +67,11 @@ const DetailedNewsScreen: React.FC<DetailedNewsScreenProps> = ({
 
   if (loading) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
+      <Background>
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color="#0DD9FA" />
+        </View>
+      </Background>
     );
   }
 
@@ -324,6 +333,12 @@ const styles = StyleSheet.create({
   },
   topContainer: {
     marginTop: 300,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
   },
 });
 

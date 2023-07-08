@@ -1,5 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -58,7 +59,15 @@ const CharacterDetailsScreen = ({
   const goBackHandler = () => {
     navigation.goBack();
   };
-
+  if (loading) {
+    return (
+      <Background>
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color="#0DD9FA" />
+        </View>
+      </Background>
+    );
+  }
   if (!characterData) {
     return null;
   }
@@ -267,6 +276,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     overflow: 'scroll',
     height: WINDOW_HEIGHT - 320,
+  },
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
   },
 });
 export default memo(CharacterDetailsScreen);
