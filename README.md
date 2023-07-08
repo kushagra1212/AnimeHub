@@ -1,4 +1,4 @@
-# AnimeHub <img align='center' src='https://firebasestorage.googleapis.com/v0/b/eimentum.appspot.com/o/animeHub%2Fadaptive-icon.png?alt=media&token=14e06def-0ca5-4eae-b6e2-5964da33d43b' width="50">
+# AnimeHub <img align='center' src='https://firebasestorage.googleapis.com/v0/b/eimentum.appspot.com/o/animeHub%2Fadaptive-icon.png?alt=media&token=14e06def-0ca5-4eae-b6e2-5964da33d43b' width="50" style="border-radius:30px;">
 
 AnimeHub is a React Native Expo application designed to provide users with an immersive anime experience. With its comprehensive features and sleek user interface, AnimeHub offers a seamless way to access the latest anime news, filter news articles based on preferences, explore detailed character information, and discover in-depth details about various anime titles. Utilizing the power of React Native Skia, AnimeHub incorporates neumorphic design elements, enhancing the visual appeal and overall user experience.
 
