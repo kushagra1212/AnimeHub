@@ -17,10 +17,10 @@ Figures 1: The home screen showcases the latest anime news, allowing users to st
 Figures 2: Effortlessly search for anime characters and delve into their detailed profiles.
 <div align="left" style="display: flex; flex-direction: column;margin-bottom:20px">
     <div style="display: flex; justify-content: center; gap: 20px;">
-        <img src="https://firebasestorage.googleapis.com/v0/b/eimentum.appspot.com/o/animeHub%2FVideoCapture_20230709-011259.jpg?alt=media&token=62ccdc8c-2a46-4625-bbb2-13737f0e80f7" width="200" alt="Image 1">
-        <img src="https://firebasestorage.googleapis.com/v0/b/eimentum.appspot.com/o/animeHub%2FVideoCapture_20230709-011321.jpg?alt=media&token=ad5b49b2-edc1-4152-92b8-7418f5bc87b1" width="200" alt="Image 2">
-        <img src="https://firebasestorage.googleapis.com/v0/b/eimentum.appspot.com/o/animeHub%2FVideoCapture_20230709-011311.jpg?alt=media&token=c767262b-3ee0-44b7-8b4c-561c17fb3fbc" width="200" alt="Image 2">
-           <img src="https://github.com/kushagra1212/insta-clone/blob/main/ezgif-2-0f7162f607.gif" width="250"  alt="Image 2">
+        <img src="https://firebasestorage.googleapis.com/v0/b/eimentum.appspot.com/o/animeHub%2FVideoCapture_20230709-011259.jpg?alt=media&token=62ccdc8c-2a46-4625-bbb2-13737f0e80f7" width="180" alt="Image 1">
+        <img src="https://firebasestorage.googleapis.com/v0/b/eimentum.appspot.com/o/animeHub%2FVideoCapture_20230709-011321.jpg?alt=media&token=ad5b49b2-edc1-4152-92b8-7418f5bc87b1" width="180" alt="Image 2">
+        <img src="https://firebasestorage.googleapis.com/v0/b/eimentum.appspot.com/o/animeHub%2FVideoCapture_20230709-011311.jpg?alt=media&token=c767262b-3ee0-44b7-8b4c-561c17fb3fbc" width="180" alt="Image 2">
+           <img src="https://github.com/kushagra1212/insta-clone/blob/main/ezgif-2-0f7162f607.gif" width="220"  alt="Image 2">
    </div>
 </div>
 
