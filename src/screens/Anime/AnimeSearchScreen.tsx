@@ -59,9 +59,7 @@ const AnimeSearchScreen = ({ navigation }) => {
     }
   };
 
-  const handleSearchSubmit = () => {
-    handleSearch(searchText);
-  };
+  const handleSearchSubmit = () => {};
   useEffect(() => {
     if (navigation) {
       navigation.getParent()?.setOptions({
@@ -120,6 +118,7 @@ const AnimeSearchScreen = ({ navigation }) => {
     roundedRectHeight = 60,
     canvasWidth = WINDOW_WIDTH,
     canvasHeight = 120;
+
   return (
     <Background>
       <View style={styles.container}>
@@ -196,11 +195,20 @@ const AnimeSearchScreen = ({ navigation }) => {
           </View>
         </SearchInput>
 
-        {!animeResponse && searchText && searchText !== '' && !loading ? (
-          <Text style={styles.message}>No results found</Text>
+        {(!animeResponse || animeResponse.animes.length == 0) &&
+        searchText &&
+        searchText !== '' &&
+        !loading ? (
+          <View style={styles.noresults}>
+            <Text style={styles.message}>No results found</Text>
+          </View>
         ) : null}
-        {!animeResponse && searchText === '' && !loading ? (
-          <Text style={styles.message}>Search Anime Here</Text>
+        {(!animeResponse || animeResponse.animes.length === 0) &&
+        searchText === '' &&
+        !loading ? (
+          <View style={styles.noresults}>
+            <Text style={styles.message}>Search Anime Here</Text>
+          </View>
         ) : null}
         {loading ? (
           <View style={styles.loading}>
@@ -238,12 +246,10 @@ const styles = StyleSheet.create({
     height: WINDOW_HEIGHT,
   },
   message: {
-    fontSize: 48,
-    fontWeight: 'bold',
+    fontSize: 28,
     textAlign: 'center',
-    marginTop: WINDOW_HEIGHT / 2 - 100,
-    color: COLORS.greenPrimary,
-    backgroundColor: 'red',
+    color: COLORS.white,
+    fontFamily: 'extra-bold',
   },
   loadingContainer: {
     flex: 1,
@@ -255,6 +261,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
+  },
+  noresults: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: WINDOW_HEIGHT,
+    position: 'absolute',
+    width: WINDOW_WIDTH,
   },
 });
 

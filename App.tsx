@@ -16,8 +16,6 @@ export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [fontsLoaded] = useFonts(LOAD_FONTS);
 
-  console.log(fontsLoaded);
-
   useEffect(() => {
     async function prepare() {
       try {

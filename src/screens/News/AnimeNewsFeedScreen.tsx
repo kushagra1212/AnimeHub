@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, Image } from 'react-native';
-import { memo } from 'react';
 import { useQuery } from '@apollo/client';
 import { AnimeNewsData, AnimeNewsVariables, Media } from '../../types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -23,6 +22,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { tabBarStyle } from '../../utils';
 import Shadder from '../../components/ui-components/Shadder';
+import { Text } from 'react-native';
 const { width, height: SCREEEN_HEIGHT } = Dimensions.get('window');
 
 interface AnimeNewsFeedScreenProps {
@@ -172,7 +172,6 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
     return <View>Something went wrong</View>;
   }
   const renderNewsItem = ({ item }: { item: Media }) => {
-    if (item.title?.english === null) return null;
     return (
       <NewsCard
         item={item}
@@ -216,6 +215,13 @@ const AnimeNewsFeedScreen: React.FC<AnimeNewsFeedScreenProps> = ({
           />
         ) : null}
 
+        {!loading &&
+        !isLoading &&
+        (!response || response.media.length === 0) ? (
+          <View>
+            <Text>Didn't get anything, try again</Text>
+          </View>
+        ) : null}
         {showBottomSheet ? (
           <BottomSheet bottomSheetToggle={bottomSheetToggle} ref={sheetRef}>
             <FilterSheet
@@ -300,30 +306,4 @@ export const pickerSelectStyles = StyleSheet.create({
   },
 });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingTop: 10,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  filterLabel: {
-    marginRight: 10,
-    fontSize: 16,
-  },
-
-  readMore: {
-    color: COLORS.primary,
-    marginTop: 5,
-  },
-  genres: {
-    fontStyle: 'italic',
-    marginBottom: 5,
-  },
-});
-
-export default memo(AnimeNewsFeedScreen);
+export default AnimeNewsFeedScreen;

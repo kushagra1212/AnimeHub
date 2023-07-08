@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { COLORS } from '../../theme';
 import { useQuery } from '@apollo/client';
-import { WINDOW_HEIGHT, WINDOW_WIDTH } from '../../utils';
+import { WINDOW_WIDTH } from '../../utils';
 import Search from '../../components/molecules/Search';
 import CharacterCard from '../../components/molecules/CharacterCard';
 
@@ -74,7 +74,6 @@ const CharacterScreen = ({ navigation }) => {
   const goBackHandler = () => {};
 
   const handleSearch = (text: string) => {
-    console.log('text', text);
     setSearchText(text);
 
     setCharacterResponse(null);
@@ -196,8 +195,7 @@ const CharacterScreen = ({ navigation }) => {
                 color: 'white',
                 fontFamily: 'extra-bold',
                 fontSize: 25,
-                top: WINDOW_HEIGHT / 2 - 100,
-                position: 'absolute',
+                alignSelf: 'center',
               }}
             >
               No results found
@@ -215,7 +213,7 @@ const CharacterScreen = ({ navigation }) => {
         }}
       /> */}
 
-        {characterResponse ? (
+        {characterResponse && characterResponse.characters.length ? (
           <View
             style={{
               flex: 1,
@@ -251,7 +249,11 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
+    height: 800,
+    marginTop: 100,
+    marginBottom: 50,
     justifyContent: 'center',
+    alignContent: 'center',
     alignItems: 'center',
   },
   loading: {

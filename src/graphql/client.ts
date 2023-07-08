@@ -18,15 +18,33 @@ const client = new ApolloClient({
         fields: {
           Page: {
             keyArgs: false,
+            merge: (existing, incoming) => {
+              return incoming;
+            },
+          },
+          Media: {
+            keyArgs: false,
+            merge: (existing, incoming) => {
+              return incoming;
+            },
           },
           media: {
             keyArgs: false,
+            merge: (existing, incoming) => {
+              return incoming;
+            },
           },
           characters: {
             keyArgs: false,
+            merge: (existing, incoming) => {
+              return incoming;
+            },
           },
           Character: {
             keyArgs: false,
+            merge: (existing, incoming) => {
+              return incoming;
+            },
           },
         },
       },
